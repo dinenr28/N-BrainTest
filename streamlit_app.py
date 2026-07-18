@@ -262,4 +262,3 @@ elif menu == "🧮 Kalkulator Scientific":
             st.session_state.calc_expression = str(hasil_eval)
         except Exception:
             st.error("Format Persamaan Error/Salah Tulis. Cek Kurung Tutup Anda.")
-    
