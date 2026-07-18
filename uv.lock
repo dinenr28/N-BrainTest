@@ -1,7 +1,0 @@
-version = 1
-manifest-path = "pyproject.toml"
-
-[[package]]
-name = "streamlit"
-version = "1.30.0"
-source = { registry = "https://pypi.org/simple" }
