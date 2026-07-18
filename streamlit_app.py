@@ -1,176 +1,275 @@
 import streamlit as st
 import random
+import math
+
+# CONFIG Halaman
+st.set_page_config(page_title="N-BrainTest Premium", layout="wide")
 
 # ==========================================
-# 1. GENERATOR BANK SOAL ACAK DENGAN LATEX EQUATION (FIXED EXTRA BACKSLASH)
+# 1. DATABASE RUMUS & MATERI (MENU PELAJARAN)
 # ==========================================
-def buat_soal_sd():
-    soal_list = []
-    # 5 soal Pilihan Ganda secara acak
-    for i in range(5):
-        a = random.randint(10, 50)
-        b = random.randint(5, 20)
-        c = random.randint(2, 10)
-        hasil = a + b * c
-        soal_list.append({
-            "id": f"sd-pg-{i}",
-            "tipe": "pilihan_ganda",
-            "pertanyaan": f"Berapakah hasil dari $ {a} + {b} \\times {c} $ ?",
-            "pilihan": [f"A. $ {hasil} $", f"B. $ {hasil + 5} $", f"C. $ {hasil - 10} $", f"D. $ {hasil + 2} $"],
-            "kunci": "A",
-            "pembahasan": f"Dahulukan perkalian: $ {b} \\times {c} = {b*c} $. Lalu tambahkan dengan {a}: $ {a} + {b*c} = {hasil} $."
-        })
-    # 5 soal Essay secara acak
-    for i in range(5):
-        a = random.randint(50, 200)
-        b = random.randint(2, 8)
-        hasil = a // b
-        soal_list.append({
-            "id": f"sd-es-{i}",
-            "tipe": "essay",
-            "pertanyaan": f"Berapakah hasil pembagian bulat dari $ {a} \\div {b} $ ?",
-            "kunci": str(hasil),
-            "pembahasan": f"Hasil dari $ {a} \\div {b} $ adalah $ {hasil} $."
-        })
-    return soal_list
-
-def buat_soal_smp():
-    soal_list = []
-    # 5 soal Pilihan Ganda Aljabar
-    for i in range(5):
-        x = random.randint(2, 9)
-        a = random.randint(2, 5)
-        c = random.randint(10, 30)
-        b = c - (a * x)
-        opsi_a = x
-        soal_list.append({
-            "id": f"smp-pg-{i}",
-            "tipe": "pilihan_ganda",
-            "pertanyaan": f"Jika $ {a}x + ({b}) = {c} $, berapakah nilai dari variabel $ x $?",
-            "pilihan": [f"A. $ {opsi_a} $", f"B. $ {opsi_a + 2} $", f"C. $ {opsi_a - 1} $", f"D. $ {opsi_a + 3} $"],
-            "kunci": "A",
-            "pembahasan": f"Pindah ruas: $ {a}x = {c} - ({b}) \\rightarrow {a}x = {a*x} \\rightarrow x = {x} $."
-        })
-    # 5 soal Essay Modulo
-    for i in range(5):
-        a = random.randint(30, 99)
-        b = random.randint(4, 9)
-        hasil = a % b
-        soal_list.append({
-            "id": f"smp-es-{i}",
-            "tipe": "essay",
-            "pertanyaan": f"Berapakah sisa pembagian dari ekspresi berikut: $ {a} \\pmod{{ {b} }} $ ?",
-            "kunci": str(hasil),
-            "pembahasan": f"$ {a} $ dibagi $ {b} $ menghasilkan sisa $ {hasil} $."
-        })
-    return soal_list
-
-def buat_soal_sma():
-    soal_list = []
-    # 5 soal Pilihan Ganda Integral Tentu
-    for i in range(5):
-        n = random.randint(2, 3)
-        a = n + 1
-        b_atas = random.randint(2, 3)
-        b_bawah = 1
-        hasil = (b_atas**a) - (b_bawah**a)
-        soal_list.append({
-            "id": f"sma-pg-{i}",
-            "tipe": "pilihan_ganda",
-            "pertanyaan": f"Tentukan hasil nilai akhir dari integral tentu berikut: $$ \\int_{{{b_bawah}}}^{{{b_atas}}} {a}x^{{{n}}} \\, dx $$",
-            "pilihan": [f"A. $ {hasil} $", f"B. $ {hasil + 4} $", f"C. $ {hasil - 2} $", f"D. $ {hasil * 2} $"],
-            "kunci": "A",
-            "pembahasan": f"Antiturunan dari $ {a}x^{{{n}}} $ adalah $ x^{{{a}}} $. Masukkan batas atas dan bawah: $ ({b_atas}^{{{a}}}) - ({b_bawah}^{{{a}}}) = {hasil} $."
-        })
-    # 5 soal Essay Turunan Fungsi
-    for i in range(5):
-        pangkat = random.randint(3, 5)
-        koef = random.randint(2, 4)
-        x_val = 2
-        turunan_koef = koef * pangkat
-        turunan_pangkat = pangkat - 1
-        hasil = turunan_koef * (x_val**turunan_pangkat)
-        soal_list.append({
-            "id": f"sma-es-{i}",
-            "tipe": "essay",
-            "pertanyaan": f"Diketahui fungsi $ f(x) = {koef}x^{{{pangkat}}} $. Berapakah nilai dari turunan pertama $ f'(2) $ ?",
-            "kunci": str(hasil),
-            "pembahasan": f"Rumus turunan $ f'(x) = {turunan_koef}x^{{{turunan_pangkat}}} $. Substitusi nilai $ x=2 \\rightarrow {turunan_koef} \\times ({x_val}^{{{turunan_pangkat}}}) = {hasil} $."
-        })
-    return soal_list
+RUMUS_MATEMATIKA = {
+    "SD": {
+        "Perhitungan Dasar & Pecahan": r"""
+        * **Kabataku**: Prioritas hitung adalah Kali ($\times$), Bagi ($\div$), Tambah ($+$), Kurang ($-$).
+        * **Pecahan**: $\frac{\text{Pembilang}}{\text{Penyebut}}$. Menyamakan penyebut menggunakan KPK.
+        """,
+        "KPK & FPB": r"""
+        * **KPK (Kelipatan Persekutuan Terkecil)**: Ambil semua faktor prima dengan pangkat terbesar.
+        * **FPB (Faktor Persekutuan Terbesar)**: Ambil faktor prima yang sama dengan pangkat terkecil.
+        """,
+        "Luas & Volume (Dasar)": r"""
+        * **Persegi**: $L = s \times s$
+        * **Persgi Panjang**: $L = p \times l$
+        * **Kubus**: $V = s^3$
+        * **Balok**: $V = p \times l \times t$
+        """
+    },
+    "SMP": {
+        "Aljabar & Persamaan Linear": r"""
+        * **Mencari nilai $x$**: Pindah ruas membalik tanda operasi ($+$ menjadi $-$, $\times$ menjadi $\div$).
+        * **SPLDV (Dua Variabel)**: Bentuk umum $ax + by = c$. Diselesaikan dengan metode **Substitusi** (memasukkan nilai) atau **Eliminasi** (menghilangkan variabel).
+        """,
+        "SPLTV & Bangun Ruang": r"""
+        * **SPLTV**: Memiliki tiga variabel ($x, y, z$). Butuh minimal 3 persamaan.
+        * **Volume Tabung**: $V = \pi r^2 t$
+        * **Volume Kerucut**: $V = \frac{1}{3} \pi r^2 t$
+        """
+    },
+    "SMA": {
+        "Logaritma & Finansial": r"""
+        * **Logaritma**: ${^a}\log b = c \iff a^c = b$
+        * **Bunga Tunggal**: $B = M_0 \times i \times t$
+        * **Bunga Majemuk**: $M_t = M_0 (1 + i)^t$
+        """,
+        "Kalkulus (Integral & Turunan)": r"""
+        * **Turunan**: $f(x) = ax^n \rightarrow f'(x) = a \cdot n \cdot x^{n-1}$
+        * **Integral Tak Tentu**: $\int ax^n \, dx = \frac{a}{n+1} x^{n+1} + C$
+        * **Integral Tentu**: $\int_{a}^{b} f(x) \, dx = F(b) - F(a)$
+        """
+    }
+}
 
 # ==========================================
-# 2. SISTEM STATE SESSION & NAVIGASI DASHBOARD
+# 2. GENERATOR 10 SOAL ACAK CAMPURAN (PILIHAN GANDA & ESSAY)
 # ==========================================
-if "soal_sesi" not in st.session_state:
-    st.session_state.soal_sesi = None
-if "jenjang_sebelumnya" not in st.session_state:
-    st.session_state.jenjang_sebelumnya = ""
+def generate_10_soal(jenjang):
+    soal_campuran = []
+    
+    if jenjang == "SD":
+        # Topik: Perhitungan, KPK/FPB, Luas/Volume, Pecahan
+        for i in range(5): # 5 Pilihan Ganda
+            a, b, c = random.randint(10, 30), random.randint(5, 15), random.randint(2, 6)
+            hasil = a + (b * c)
+            soal_campuran.append({
+                "id": f"sd-pg-{i}", "tipe": "pilihan_ganda",
+                "pertanyaan": r"Berapakah hasil dari $" + f"{a} + {b} \times {c}" + r"$ ?",
+                "pilihan": [f"{hasil}", f"{hasil+3}", f"{hasil-5}", f"{hasil+10}"], "kunci": f"{hasil}",
+                "pembahasan": r"Dahulukan perkalian: $" + f"{b} \times {c} = {b*c}" + r"$. Lalu $" + f"{a} + {b*c} = {hasil}" + r"$"
+            })
+        for i in range(5): # 5 Essay
+            s = random.randint(4, 10)
+            vol = s**3
+            soal_campuran.append({
+                "id": f"sd-es-{i}", "tipe": "essay",
+                "pertanyaan": r"Sebuah kubus memiliki panjang rusuk $s = " + f"{s}" + r" \text{ cm}$. Berapakah Volume kubus tersebut (angka saja)?",
+                "kunci": f"{vol}", "pembahasan": r"Volume kubus: $V = s^3 = " + f"{s}^3 = {vol}" + r" \text{ cm}^3$."
+            })
+            
+    elif jenjang == "SMP":
+        # Topik: Mencari x, Substitusi/Eliminasi, SPLDV, Bangun Ruang
+        for i in range(5):
+            x_val = random.randint(2, 7)
+            a, b = random.randint(2, 5), random.randint(1, 10)
+            c = (a * x_val) + b
+            soal_campuran.append({
+                "id": f"smp-pg-{i}", "tipe": "pilihan_ganda",
+                "pertanyaan": r"Jika diketahui persamaan $" + f"{a}x + {b} = {c}" + r"$, tentukan nilai $x$!",
+                "pilihan": [f"{x_val}", f"{x_val+1}", f"{x_val-2}", f"{x_val+3}"], "kunci": f"{x_val}",
+                "pembahasan": r"Pindah ruas: $" + f"{a}x = {c} - {b} \rightarrow {a}x = {a*x_val} \rightarrow x = {x_val}" + r"$"
+            })
+        for i in range(5):
+            x, y = random.randint(1, 4), random.randint(1, 4)
+            c1, c2 = x + y, x - y
+            soal_campuran.append({
+                "id": f"smp-es-{i}", "tipe": "essay",
+                "pertanyaan": r"Diketahui sistem persamaan linear (SPLDV): $x + y = " + f"{c1}" + r"$ dan $x - y = " + f"{c2}" + r"$. Berapakah nilai dari $x$?",
+                "kunci": f"{x}", "pembahasan": r"Eliminasi dengan menjumlahkan kedua persamaan: $2x = " + f"{c1+c2} \rightarrow x = {x}" + r"$"
+            })
+            
+    else: # SMA
+        # Topik: Logaritma, Bunga, Integral, SPLTV
+        for i in range(5):
+            n = random.randint(2, 3)
+            a = n + 1
+            hasil = (2**a) - (1**a)
+            soal_campuran.append({
+                "id": f"sma-pg-{i}", "tipe": "pilihan_ganda",
+                "pertanyaan": r"Tentukan hasil nilai dari integral tentu berikut: $$ \int_{1}^{2} " + f"{a}x^{n}" + r" \, dx $$",
+                "pilihan": [f"{hasil}", f"{hasil+2}", f"{hasil-1}", f"{hasil*2}"], "kunci": f"{hasil}",
+                "pembahasan": r"Antiturunan dari $" + f"{a}x^{n}" + r"$ adalah $x^" + f"{a}" + r"$. Evaluasi batas: $2^" + f"{a}" + r" - 1^" + f"{a}" + r" = " + f"{hasil}" + r"$"
+            })
+        for i in range(5):
+            basis = random.choice([2, 3, 5])
+            pangkat = random.randint(2, 4)
+            numerus = basis**pangkat
+            soal_campuran.append({
+                "id": f"sma-es-{i}", "tipe": "essay",
+                "pertanyaan": r"Berapakah nilai eksak dari ekspresi logaritma berikut: ${^" + f"{basis}" + r"}\log " + f"{numerus}" + r"$?",
+                "kunci": f"{pangkat}", "pembahasan": r"Karena $" + f"{basis}^{pangkat} = {numerus}" + r"$, maka nilai logaritmanya adalah ${" + f"{pangkat}" + r"}$."
+            })
+            
+    random.shuffle(soal_campuran)
+    return soal_campuran
 
-st.sidebar.title("🎛️ Dashboard Menu")
-menu_utama = st.sidebar.radio(
-    "Pilih Menu:", 
-    ["🏠 Menu Utama", "✍️ Mulai Ujian (10 Soal Acak)", "🧮 Kalkulator Ilmiah"]
-)
+# ==========================================
+# 3. INTERACTION SESSION STATE
+# ==========================================
+if "soal_aktif" not in st.session_state:
+    st.session_state.soal_aktif = None
+if "jenjang_pilihan" not in st.session_state:
+    st.session_state.jenjang_pilihan = "SD"
+if "calc_expression" not in st.session_state:
+    st.session_state.calc_expression = ""
 
-# --- MENU UTAMA ---
-if menu_utama == "🏠 Menu Utama":
-    st.title("🧠 N-BrainTest Dashboard (Equation Edition)")
-    st.markdown("Aplikasi bank soal matematika otomatis dengan penulisan notasi matematika yang presisi menggunakan standar LaTeX.")
-    st.session_state.soal_sesi = None 
+# SIDEBAR NAVIGATION
+st.sidebar.title("🎛️ N-BrainTest Dashboard")
+menu = st.sidebar.radio("Navigasi Menu:", ["🏠 Menu Utama & Kuis", "📖 Pelajaran (Rumus)", "🧮 Kalkulator Scientific"])
 
-# --- LATIHAN SOAL (10 SOAL PER SESI) ---
-elif menu_utama == "✍️ Mulai Ujian (10 Soal Acak)":
-    st.title("📝 Ujian Kuantitatif & Logika Matematika")
+# ==========================================
+# A. MENU UTAMA & KUIS
+# ==========================================
+if menu == "🏠 Menu Utama & Kuis":
+    st.title("🧠 Menu Utama - Ujian Kuantitatif")
+    
+    # Pilihan Jenjang
     jenjang = st.selectbox("Pilih Jenjang Sekolah:", ["SD", "SMP", "SMA"])
     
-    if st.button("🔄 Generate 10 Soal Baru") or st.session_state.soal_sesi is None or st.session_state.jenjang_sebelumnya != jenjang:
-        st.session_state.jenjang_sebelumnya = jenjang
-        if jenjang == "SD":
-            st.session_state.soal_sesi = buat_soal_sd()
-        elif jenjang == "SMP":
-            st.session_state.soal_sesi = buat_soal_smp()
-        else:
-            st.session_state.soal_sesi = buat_soal_sma()
-            
-    daftar_soal = st.session_state.soal_sesi
-    jawaban_user = {}
-    
-    st.info(f"Memuat 10 soal acak tingkat {jenjang}. Selamat mengerjakan!")
-    st.write("---")
-    
-    for i, soal in enumerate(daftar_soal):
-        st.markdown(f"### Soal {i+1}:")
-        st.markdown(soal['pertanyaan'])
-        if soal["tipe"] == "pilihan_ganda":
-            jawaban_user[soal["id"]] = st.radio("Pilih Opsi:", soal["pilihan"], key=soal["id"])
-        else:
-            jawaban_user[soal["id"]] = st.text_input("Tulis jawaban berupa angka saja:", key=soal["id"])
-            
-    if st.button("Kirim Lembar Ujian"):
-        benar = 0
-        for soal in daftar_soal:
-            ans = jawaban_user.get(soal['id'], "").strip().upper()
-            user_choice = ans[0] if soal['tipe'] == 'pilihan_ganda' and ans else ans
-            if user_choice == soal['kunci']:
-                benar += 1
-                
-        skor = round((benar / len(daftar_soal)) * 100)
-        st.success(f"🎯 Hasil Evaluasi Akhir Sesi: {skor} / 100 ({benar} dari 10 Soal Benar)")
-        
-        st.subheader("💡 Pembahasan Lengkap Sesi Ini:")
-        for i, soal in enumerate(daftar_soal):
-            st.markdown(f"**Pembahasan Soal {i+1}:**")
-            st.markdown(soal['pembahasan'])
+    # Deteksi ganti tingkat sekolah buat auto reset kuis
+    if st.session_state.jenjang_pilihan != jenjang:
+        st.session_state.jenjang_pilihan = jenjang
+        st.session_state.soal_aktif = None
 
-# --- KALKULATOR ILMIAH ---
-elif menu_utama == "🧮 Kalkulator Ilmiah":
-    st.title("⚡ Kalkulator Modulo & Kalkulus")
+    # Tombol Aksi Kuis
+    col_btn1, col_btn2 = st.columns(2)
+    with col_btn1:
+        if st.button("🚀 Mulai / Acak Ujian Sesi Baru"):
+            st.session_state.soal_aktif = generate_10_soal(jenjang)
+    with col_btn2:
+        if st.button("🔄 Restart Ulang Soal Sesi Ini"):
+            st.rerun()
+
+    st.write("---")
+
+    if st.session_state.soal_aktif is not None:
+        st.info(f"📋 10 Soal Acak Campuran Tingkat {jenjang} berhasil dimuat.")
+        jawaban_user = {}
+        
+        for i, soal in enumerate(st.session_state.soal_aktif):
+            st.markdown(f"#### Soal {i+1}:")
+            st.markdown(soal["pertanyaan"])
+            
+            if soal["tipe"] == "pilihan_ganda":
+                # Ditambahkan opsi None di indeks awal agar default kosong/belum menjawab
+                opsi_pg = [None] + soal["pilihan"]
+                pilihan_terpilih = st.radio("Pilih Opsi Jawaban:", opsi_pg, key=f"soal-{soal['id']}", format_func=lambda x: "Belum Memilih..." if x is None else x)
+                jawaban_user[soal["id"]] = pilihan_terpilih
+            else:
+                jawaban_user[soal["id"]] = st.text_input("Tulis jawaban eksak kamu (Angka):", key=f"soal-{soal['id']}")
+            st.write("")
+
+        if st.button("📤 Kirim Semua Lembar Jawaban"):
+            skor_benar = 0
+            for soal in st.session_state.soal_aktif:
+                ans = jawaban_user.get(soal["id"])
+                if ans is not None:
+                    ans_clean = str(ans).strip().lower()
+                    kunci_clean = str(soal["kunci"]).strip().lower()
+                    if ans_clean == kunci_clean:
+                        skor_benar += 1
+                        
+            total_skor = round((skor_benar / 10) * 100)
+            st.success(f"🎯 Selesai! Skor Ujian Anda: {total_skor} / 100 ({skor_benar} dari 10 soal benar)")
+            
+            st.subheader("💡 Pembahasan Analitis Soal:")
+            for i, soal in enumerate(st.session_state.soal_aktif):
+                st.markdown(f"**Soal {i+1}:**")
+                st.markdown(soal["pembahasan"])
+    else:
+        st.warning("Silakan klik tombol **'🚀 Mulai / Acak Ujian Sesi Baru'** di atas untuk menampilkan soal campuran.")
+
+# ==========================================
+# B. MENU PELAJARAN (RUMUS-RUMUS)
+# ==========================================
+elif menu == "📖 Pelajaran (Rumus)":
+    st.title("📚 Ruang Teori & Rumus Resmi")
+    jenjang_materi = st.selectbox("Lihat Rumus Jenjang:", ["SD", "SMP", "SMA"])
     
-    st.write("Rumus Integral Tentu Standar:")
-    st.latex(r"\int x^n \, dx = \frac{1}{n+1} x^{n+1} + C")
+    st.write("---")
+    st.subheader(f"Daftar Kompetensi Inti Matematika - {jenjang_materi}")
     
-    a = st.number_input("Koefisien Bilangan Utama:", value=10)
-    b = st.number_input("Pembagi / Batas Atas:", value=3)
-    if st.button("Hitung Sisa Bagi (Modulo)"):
-        st.success(f"Hasil: {a % b}")
+    for judul_topik, isi_rumus in RUMUS_MATEMATIKA[jenjang_materi].items():
+        with st.expander(f"📁 Rumus: {judul_topik}"):
+            st.markdown(isi_rumus)
+
+# ==========================================
+# C. KALKULATOR SCIENTIFIC (TOMBOL FISIK)
+# ==========================================
+elif menu == "🧮 Kalkulator Scientific":
+    st.title("⚡ Scientific Calculator Pad")
+    
+    # Menampilkan string operasi saat ini
+    st.text_input("Screen / Nilai Operasi:", value=st.session_state.calc_expression, disabled=True)
+    
+    # Layout Tombol Fisik
+    row1_c1, row1_c2, row1_c3, row1_c4, row1_c5 = st.columns(5)
+    row2_c1, row2_c2, row2_c3, row2_c4, row2_c5 = st.columns(5)
+    row3_c1, row3_c2, row3_c3, row3_c4, row3_c5 = st.columns(5)
+    row4_c1, row4_c2, row4_c3, row4_c4, row4_c5 = st.columns(5)
+    
+    # Fungsi pembantu append karakter
+    def add_to_calc(char):
+        st.session_state.calc_expression += str(char)
+        
+    # Baris 1
+    if row1_c1.button("sin"): add_to_calc("math.sin(")
+    if row1_c2.button("cos"): add_to_calc("math.cos(")
+    if row1_c3.button("tan"): add_to_calc("math.tan(")
+    if row1_c4.button("log"): add_to_calc("math.log10(")
+    if row1_c5.button("CLEAR"): st.session_state.calc_expression = ""
+    
+    # Baris 2
+    if row2_c1.button("7"): add_to_calc("7")
+    if row2_c2.button("8"): add_to_calc("8")
+    if row2_c3.button("9"): add_to_calc("9")
+    if row2_c4.button("÷"): add_to_calc("/")
+    if row2_c5.button("sqrt (√)"): add_to_calc("math.sqrt(")
+    
+    # Baris 3
+    if row3_c1.button("4"): add_to_calc("4")
+    if row3_c2.button("5"): add_to_calc("5")
+    if row3_c3.button("6"): add_to_calc("6")
+    if row3_c4.button("×"): add_to_calc("*")
+    if row3_c5.button("("): add_to_calc("(")
+    
+    # Baris 4
+    if row4_c1.button("1"): add_to_calc("1")
+    if row4_c2.button("2"): add_to_calc("2")
+    if row4_c3.button("3"): add_to_calc("3")
+    if row4_c4.button("-"): add_to_calc("-")
+    if row4_c5.button(")"): add_to_calc(")")
+
+    # Baris Tambahan Konfirmasi Akhir
+    col_fin1, col_fin2, col_fin3 = st.columns([2, 1, 2])
+    if col_fin1.button("0"): add_to_calc("0")
+    if col_fin2.button("+"): add_to_calc("+")
+    
+    if col_fin3.button("== HITUNG HASIL =="):
+        try:
+            expr = st.session_state.calc_expression
+            # Mengamankan evaluasi string matematika dasar & math library
+            hasil_eval = eval(expr, {"math": math})
+            st.success(f"Hasil Evaluasi Akhir: {hasil_eval}")
+            st.session_state.calc_expression = str(hasil_eval)
+        except Exception:
+            st.error("Format Persamaan Error/Salah Tulis. Cek Kurung Tutup Anda.")
