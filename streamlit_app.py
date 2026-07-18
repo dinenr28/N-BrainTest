@@ -1,168 +1,172 @@
 import streamlit as st
-import math
+import random
 
 # ==========================================
-# 1. DATABASE MATERI & SOAL SUPER LENGKAP
+# 1. GENERATOR BANK SOAL ACAK (MENGHASILKAN RIBUAN KOMBINASI)
 # ==========================================
-DATABASE_MATEMATIKA = {
-    "SD": {
-        "Perhitungan Dasar": {
-            "materi": "Perhitungan dasar meliputi penjumlahan, pengurangan, perkalian, dan pembagian. Ingat aturan kabataku (kali, bagi, tambah, kurang) untuk menentukan prioritas hitung.",
-            "soal": [
-                {"id": "sd-dasar-1", "tipe": "pilihan_ganda", "pertanyaan": "Hasil dari 25 + 15 x 4 - 30 adalah...", "pilihan": ["A. 130", "B. 55", "C. 70", "D. 95"], "kunci": "B", "pembahasan": "Kerjakan perkalian dulu: 15 x 4 = 60. Lalu: 25 + 60 - 30 = 55."},
-                {"id": "sd-dasar-2", "tipe": "essay", "pertanyaan": "Berapakah hasil dari 125 : 5 + 8?", "kunci": "33", "pembahasan": "125 : 5 = 25. Kemudian 25 + 8 = 33."}
-            ]
-        },
-        "Pecahan & Desimal": {
-            "materi": "Mengubah pecahan menjadi desimal atau persen mempermudah perhitungan operasi campuran cerita.",
-            "soal": [
-                {"id": "sd-pecahan-1", "tipe": "pilihan_ganda", "pertanyaan": "Ibu memiliki 2,5 kg gula. Digunakan 40% untuk kue. Sisa gula ibu...", "pilihan": ["A. 1,5 kg", "B. 1,0 kg", "C. 2,1 kg", "D. 0,5 kg"], "kunci": "A", "pembahasan": "Dipakai = 40% x 2,5 = 1 kg. Sisa = 2,5 - 1 = 1,5 kg."}
-            ]
-        }
-    },
-    "SMP": {
-        "Aljabar Dasar": {
-            "materi": "Aljabar menyederhanakan ekspresi dengan huruf (variabel). Pindah ruas akan mengubah tanda operasi (+ menjadi -, x menjadi :).",
-            "soal": [
-                {"id": "smp-aljabar-1", "tipe": "pilihan_ganda", "pertanyaan": "Jika 3x - 7 = 8, berapakah nilai x?", "pilihan": ["A. 3", "B. 5", "C. 2", "D. 6"], "kunci": "B", "pembahasan": "3x = 8 + 7 -> 3x = 15 -> x = 5."}
-            ]
-        },
-        "Persamaan Kuadrat": {
-            "materi": "Persamaan kuadrat berbentuk ax² + bx + c = 0. Akar-akarnya bisa dicari dengan rumus abc atau pemfaktoran.",
-            "soal": [
-                {"id": "smp-kuadrat-1", "tipe": "pilihan_ganda", "pertanyaan": "Akar penyelesaian dari x² - 5x + 6 = 0 adalah...", "pilihan": ["A. {1, 6}", "B. {-2, -3}", "C. {2, 3}", "D. {1, 5}"], "kunci": "C", "pembahasan": "(x - 2)(x - 3) = 0. Maka x = 2 atau x = 3."}
-            ]
-        }
-    },
-    "SMA": {
-        "Logika & Algoritma": {
-            "materi": "Algoritma matematika sering dinyatakan dalam barisan pembagian, deret logika, modulo, atau pseudocode berulang.",
-            "soal": [
-                {"id": "sma-algo-1", "tipe": "pilihan_ganda", "pertanyaan": "Berapakah hasil dari 47 modulo 6?", "pilihan": ["A. 5", "B. 2", "C. 1", "D. 4"], "kunci": "A", "pembahasan": "47 dibagi 6 adalah 7 dengan sisa 5. Maka 47 mod 6 = 5."}
-            ]
-        },
-        "Integral & Kalkulus": {
-            "materi": "Integral Tentu menghitung luas daerah di bawah kurva fungsi: ∫ xⁿ dx = (1 / n+1) xⁿ⁺¹ + C.",
-            "soal": [
-                {"id": "sma-integral-1", "tipe": "pilihan_ganda", "pertanyaan": "Hasil dari ∫ (dari 1 sampai 3) 3x² dx adalah...", "pilihan": ["A. 26", "B. 27", "C. 28", "D. 24"], "kunci": "A", "pembahasan": "Integralnya [x³] batas 1 ke 3. = 3³ - 1³ = 27 - 1 = 26."}
-            ]
-        }
-    }
-}
+def buat_soal_sd():
+    soal_list = []
+    # Generate 5 soal Pilihan Ganda secara acak
+    for i in range(5):
+        a = random.randint(10, 50)
+        b = random.randint(5, 20)
+        c = random.randint(2, 10)
+        hasil = a + b * c
+        soal_list.append({
+            "id": f"sd-pg-{i}",
+            "tipe": "pilihan_ganda",
+            "pertanyaan": f"Berapakah hasil dari {a} + {b} x {c} ?",
+            "pilihan": [f"A. {hasil}", f"B. {hasil + 5}", f"C. {hasil - 10}", f"D. {hasil + 2}"],
+            "kunci": "A",
+            "pembahasan": f"Dahulukan perkalian: {b} x {c} = {b*c}. Lalu tambahkan dengan {a}: {a} + {b*c} = {hasil}."
+        })
+    # Generate 5 soal Essay secara acak
+    for i in range(5):
+        a = random.randint(50, 200)
+        b = random.randint(2, 8)
+        hasil = a // b
+        soal_list.append({
+            "id": f"sd-es-{i}",
+            "tipe": "essay",
+            "pertanyaan": f"Berapakah hasil pembagian bulat dari {a} dibagi {b} ?",
+            "kunci": str(hasil),
+            "pembahasan": f"Hasil dari {a} : {b} adalah {hasil}."
+        })
+    return soal_list
+
+def buat_soal_smp():
+    soal_list = []
+    # Generate 5 soal Pilihan Ganda Aljabar
+    for i in range(5):
+        x = random.randint(2, 9)
+        a = random.randint(2, 5)
+        c = random.randint(10, 30)
+        b = c - (a * x)
+        opsi_a = x
+        soal_list.append({
+            "id": f"smp-pg-{i}",
+            "tipe": "pilihan_ganda",
+            "pertanyaan": f"Jika {a}x + ({b}) = {c}, berapakah nilai x?",
+            "pilihan": [f"A. {opsi_a}", f"B. {opsi_a + 2}", f"C. {opsi_a - 1}", f"D. {opsi_a + 3}"],
+            "kunci": "A",
+            "pembahasan": f"Pindah ruas: {a}x = {c} - ({b}) -> {a}x = {a*x} -> x = {x}."
+        })
+    # Generate 5 soal Essay Modulo / Teori Bilangan
+    for i in range(5):
+        a = random.randint(30, 99)
+        b = random.randint(4, 9)
+        hasil = a % b
+        soal_list.append({
+            "id": f"smp-es-{i}",
+            "tipe": "essay",
+            "pertanyaan": f"Berapakah sisa pembagian (modulo) dari {a} mod {b} ?",
+            "kunci": str(hasil),
+            "pembahasan": f"{a} dibagi {b} adalah {a//b} sisa {hasil}."
+        })
+    return soal_list
+
+def buat_soal_sma():
+    soal_list = []
+    # Generate 5 soal Pilihan Ganda Integral
+    for i in range(5):
+        n = random.randint(2, 4)
+        a = n + 1
+        b_atas = random.randint(2, 3)
+        b_bawah = 1
+        hasil = (b_atas**a) - (b_bawah**a)
+        soal_list.append({
+            "id": f"sma-pg-{i}",
+            "tipe": "pilihan_ganda",
+            "pertanyaan": f"Berapakah hasil integral tentu ∫ (dari {b_bawah} sampai {b_atas}) {a}x^{n} dx ?",
+            "pilihan": [f"A. {hasil}", f"B. {hasil + 4}", f"C. {hasil - 2}", f"D. {hasil * 2}"],
+            "kunci": "A",
+            "pembahasan": f"Antiturunan dari {a}x^{n} adalah x^{a}. Substitusi batas: ({b_atas}^{a}) - ({b_bawah}^{a}) = {hasil}."
+        })
+    # Generate 5 soal Essay Turunan
+    for i in range(5):
+        pangkat = random.randint(3, 6)
+        koef = random.randint(2, 5)
+        x_val = 2
+        turunan_koef = koef * pangkat
+        turunan_pangkat = pangkat - 1
+        hasil = turunan_koef * (x_val**turunan_pangkat)
+        soal_list.append({
+            "id": f"sma-es-{i}",
+            "tipe": "essay",
+            "pertanyaan": f"Jika f(x) = {koef}x^{pangkat}, berapakah nilai dari turunan pertama f'(2) ?",
+            "kunci": str(hasil),
+            "pembahasan": f"f'(x) = {turunan_koef}x^{turunan_pangkat}. Substitusi x=2: {turunan_koef} x ({x_val}^{turunan_pangkat}) = {hasil}."
+        })
+    return soal_list
 
 # ==========================================
-# 2. SISTEM NAVIGASI DASHBOARD (SIDEBAR)
+# 2. SISTEM STATE SESSION & NAVIGASI DASHBOARD
 # ==========================================
+if "soal_sesi" not in st.session_state:
+    st.session_state.soal_sesi = None
+if "jenjang_sebelumnya" not in st.session_state:
+    st.session_state.jenjang_sebelumnya = ""
+
 st.sidebar.title("🎛️ Dashboard Menu")
 menu_utama = st.sidebar.radio(
     "Pilih Menu:", 
-    ["🏠 Menu Utama", "📖 Pelajaran & Materi", "✍️ Latihan Soal (Kuis)", "🧮 Kalkulator Ilmiah"]
+    ["🏠 Menu Utama", "✍️ Mulai Ujian (10 Soal Acak)", "🧮 Kalkulator Ilmiah"]
 )
-
-def hitung_skor(daftar_soal, jawaban_user):
-    benar = 0
-    for soal in daftar_soal:
-        ans = jawaban_user.get(soal['id'], "").strip().upper()
-        if soal['tipe'] == 'pilihan_ganda' and ans == soal['kunci']:
-            benar += 1
-        elif soal['tipe'] == 'essay' and ans.lower() == soal['kunci'].lower():
-            benar += 1
-    return round((benar / len(daftar_soal)) * 100) if daftar_soal else 0
-
-# ==========================================
-# 3. KONTEN PER MENU
-# ==========================================
 
 # --- MENU UTAMA ---
 if menu_utama == "🏠 Menu Utama":
-    st.title("🧠 N-BrainTest Dashboard")
-    st.markdown("Selamat datang di platform belajar matematika komprehensif. Pilih fitur belajar di sidebar samping!")
-    
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.info("📖 **Materi Lengkap**\nBelajar teori dari perhitungan dasar hingga integral.")
-    with col2:
-        st.success("✍️ **Soal Ujian**\nUji kemampuan logika dan hitungan kuantitatif kamu.")
-    with col3:
-        st.warning("🧮 **Kalkulator**\nAlat bantu hitung cepat rumus matematika.")
+    st.title("🧠 N-BrainTest Dashboard (Infinite Question Mode)")
+    st.markdown("Aplikasi ini dikonfigurasi dengan **Bank Soal Generator Otomatis**. Anda bisa mendapatkan ribuan variasi soal berbeda, namun dibatasi hanya **10 soal pilihan terbaik** di setiap sesi ujian.")
+    st.session_state.soal_sesi = None  # Reset kuis saat kembali ke menu utama
 
-# --- PELAJARAN & MATERI ---
-elif menu_utama == "📖 Pelajaran & Materi":
-    st.title("📚 Ruang Belajar Teori")
+# --- LATIHAN SOAL (10 SOAL PER SESI) ---
+elif menu_utama == "✍️ Mulai Ujian (10 Soal Acak)":
+    st.title("📝 Ujian Kuantitatif & Logika Matematika")
     jenjang = st.selectbox("Pilih Jenjang Sekolah:", ["SD", "SMP", "SMA"])
     
-    materi_opsi = list(DATABASE_MATEMATIKA[jenjang].keys())
-    topik = st.selectbox("Pilih Topik Pembahasan:", materi_opsi)
-    
-    isi_materi = DATABASE_MATEMATIKA[jenjang][topik]["materi"]
-    st.subheader(f"📌 Materi: {topik} ({jenjang})")
-    st.info(isi_materi)
-
-# --- LATIHAN SOAL (KUIS) ---
-elif menu_utama == "✍️ Latihan Soal (Kuis)":
-    st.title("📝 Ujian & Latihan Soal HOTS")
-    jenjang = st.selectbox("Pilih Jenjang Soal:", ["SD", "SMP", "SMA"])
-    
-    materi_opsi = list(DATABASE_MATEMATIKA[jenjang].keys())
-    topik = st.selectbox("Pilih Topik Soal:", materi_opsi)
-    
-    daftar_soal = DATABASE_MATEMATIKA[jenjang][topik]["soal"]
+    # Tombol buat generate 10 soal baru berulang-ulang tanpa batas
+    if st.button("🔄 Generate 10 Soal Baru") or st.session_state.soal_sesi is None or st.session_state.jenjang_sebelumnya != jenjang:
+        st.session_state.jenjang_sebelumnya = jenjang
+        if jenjang == "SD":
+            st.session_state.soal_sesi = buat_soal_sd()
+        elif jenjang == "SMP":
+            st.session_state.soal_sesi = buat_soal_smp()
+        else:
+            st.session_state.soal_sesi = buat_soal_sma()
+            
+    daftar_soal = st.session_state.soal_sesi
     jawaban_user = {}
     
+    st.info(f"Berhasil memuat 10 soal acak untuk tingkatan {jenjang}. Selamat mengerjakan!")
     st.write("---")
+    
     for i, soal in enumerate(daftar_soal):
         st.write(f"**Soal {i+1}: {soal['pertanyaan']}**")
         if soal["tipe"] == "pilihan_ganda":
             jawaban_user[soal["id"]] = st.radio("Pilih Opsi:", soal["pilihan"], key=soal["id"])[0]
         else:
-            jawaban_user[soal["id"]] = st.text_input("Tulis jawaban angka/kata:", key=soal["id"])
+            jawaban_user[soal["id"]] = st.text_input("Tulis jawaban berupa angka saja:", key=soal["id"])
             
-    if st.button("Kirim Lembar Jawaban"):
-        skor = hitung_skor(daftar_soal, jawaban_user)
-        st.success(f"🎯 Skor Evaluasi Kamu: {skor} / 100")
-        
-        st.subheader("💡 Lembar Pembahasan:")
+    if st.button("Kirim Lembar Ujian"):
+        benar = 0
         for soal in daftar_soal:
-            st.markdown(f"- **Kunci:** `{soal['kunci']}` | **Solusi:** {soal['pembahasan']}")
+            ans = jawaban_user.get(soal['id'], "").strip().upper()
+            if soal['tipe'] == 'pilihan_ganda' and ans == soal['kunci']:
+                benar += 1
+            elif soal['tipe'] == 'essay' and ans == soal['kunci']:
+                benar += 1
+                
+        skor = round((benar / len(daftar_soal)) * 100)
+        st.success(f"🎯 Hasil Evaluasi Akhir Sesi: {skor} / 100 ({benar} dari 10 Soal Benar)")
+        
+        st.subheader("💡 Pembahasan Lengkap Sesi Ini:")
+        for i, soal in enumerate(daftar_soal):
+            st.markdown(f"**Soal {i+1}:** {soal['pembahasan']}")
 
 # --- KALKULATOR ILMIAH ---
 elif menu_utama == "🧮 Kalkulator Ilmiah":
-    st.title("⚡ Kalkulator Super Pintar")
-    
-    tipe_kalkulator = st.selectbox("Pilih Jenis Perhitungan:", ["Hitungan Dasar", "Kalkulus (Integral/Turunan)", "Algoritma & Modulo"])
-    
-    if tipe_kalkulator == "Hitungan Dasar":
-        col1, col2 = st.columns(2)
-        num1 = col1.number_input("Angka Pertama", value=0.0)
-        num2 = col2.number_input("Angka Kedua", value=0.0)
-        operasi = st.selectbox("Operasi Matematika:", ["+", "-", "x", "/"])
-        
-        if st.button("Hitung Sekarang"):
-            if operasi == "+": hasil = num1 + num2
-            elif operasi == "-": hasil = num1 - num2
-            elif operasi == "x": hasil = num1 * num2
-            elif operasi == "/": hasil = num1 / num2 if num2 != 0 else "Error: Pembagian dengan 0"
-            st.metric("Hasil", str(hasil))
-            
-    elif tipe_kalkulator == "Kalkulus (Integral/Turunan)":
-        st.write("Membantu memproyeksikan integral tentu sederhana $f(x) = ax^n$")
-        a = st.number_input("Koefisien (a)", value=1.0)
-        n = st.number_input("Pangkat (n)", value=2.0)
-        
-        if st.button("Hitung Rumus Antiturunan"):
-            if n == -1:
-                st.code(f"Hasil integral: {a} ln|x| + C")
-            else:
-                st.code(f"Hasil integral: {a/(n+1)} x^{int(n+1)} + C")
-                
-    elif tipe_kalkulator == "Algoritma & Modulo":
-        st.write("Menghitung sisa bagi algoritma pembagian bilangan bulat.")
-        angka = st.number_input("Bilangan yang dibagi (Dividend)", value=10, step=1)
-        pembagi = st.number_input("Bilangan pembagi (Divisor)", value=3, step=1)
-        
-        if st.button("Jalankan Fungsi Modulo"):
-            if pembagi == 0:
-                st.error("Pembagi tidak boleh 0!")
-            else:
-                sisa = angka % pembagi
-                st.success(f"Hasil Akhir: {angka} mod {pembagi} = {sisa}")
+    st.title("⚡ Kalkulator Modulo & Kalkulus")
+    angka = st.number_input("Bilangan Pertama / Dividend", value=10)
+    pembagi = st.number_input("Bilangan Kedua / Divisor", value=3)
+    if st.button("Hitung Modulo"):
+        st.success(f"Hasil Sisa Bagi: {angka % pembagi}")
