@@ -1,277 +1,205 @@
-my-study-app/
-├── src/
-│   ├── app/
-│   │   ├── page.tsx               # Halaman utama (Pilih Mapel & Custom Warna)
-│   │   ├── belajar/
-│   │   │   └── [slug]/page.tsx    # Alur Belajar: Materi -> Pre-test -> Latihan -> Post-test
-│   ├── data/
-│   │   └── bankSoal.ts            # Struktur database materi dan ribuan soal
-│   ├── components/
-│   │   └── QuizEngine.tsx         # Komponen interaktif pengerjaan & pembahasan soal
+// ==========================================
+// 1. DEFINISI TIPE DATA (TYPES)
+// ==========================================
+export type Jenjang = 'SD' | 'SMP' | 'SMA';
+export type TipeSoal = 'pilihan_ganda' | 'essay';
+export type JenisTes = 'pre_test' | 'latihan_materi' | 'post_test';
+
 export interface Soal {
   id: string;
-  tipe: 'pilihan-ganda' | 'essay';
+  tipe: TipeSoal;
   pertanyaan: string;
-  opsi?: string[]; // Hanya untuk pilihan ganda
-  jawabanBenar: string;
-  pembahasan: string;
+  pilihan?: string[]; // Hanya untuk pilihan_ganda
+  kunciJawaban: string; // Kunci jawaban (A/B/C/D atau kata kunci essay)
+  pembahasan: string; // Pembahasan di akhir sesi
 }
 
 export interface Materi {
   id: string;
   judul: string;
-  kontenMateri: string;
-  preTest: Soal[];
-  latihanSoal: Soal[];
-  postTest: Soal[];
+  isiKonten: string; // Materi sebelum ngerjain soal
+  soalLatihan: Soal[];
 }
 
-export interface MapelData {
+export interface MataPelajaran {
+  id: 'matematika' | 'fisika' | 'kimia';
   nama: string;
-  tingkat: ('SD' | 'SMP' | 'SMA')[];
-  daftarMateri: { [key: string]: Materi[] }; // Kunci berupa tingkat (e.g., 'SMA')
+  jenjangTersedia: Jenjang[];
+  daftarMateri: {
+    [key in Jenjang]?: Materi[];
+  };
+  preTest: { [key in Jenjang]?: Soal[] };
+  postTest: { [key in Jenjang]?: Soal[] };
 }
 
-export const bankSoal: { [key: string]: MapelData } = {
-  matematika: {
-    nama: "Matematika",
-    tingkat: ["SD", "SMP", "SMA"],
+export interface JawabanUser {
+  soalId: string;
+  jawaban: string;
+}
+
+
+// ==========================================
+// 2. RUMUS LOGIKA PENILAIAN (UTILS)
+// ==========================================
+export const hitungSkorAkhir = (daftarSoal: Soal[], daftarJawabanUser: JawabanUser[]): number => {
+  if (daftarSoal.length === 0) return 0;
+  
+  let benar = 0;
+
+  daftarSoal.forEach((soal) => {
+    const userAns = daftarJawabanUser.find((j) => j.soalId === soal.id)?.jawaban.trim().toLowerCase();
+    const correctAns = soal.kunciJawaban.trim().toLowerCase();
+
+    if (!userAns) return; // Jika tidak dijawab, lanjut ke soal berikutnya
+
+    if (soal.tipe === 'pilihan_ganda') {
+      if (userAns === correctAns) benar++;
+    } else {
+      // Logika essay: benar jika jawaban user mengandung kata kunci jawaban
+      if (correctAns.includes(userAns) || userAns.includes(correctAns)) benar++;
+    }
+  });
+
+  // Rumus matematika skor skala 0 - 100
+  return Math.round((benar / daftarSoal.length) * 100);
+};
+
+
+// ==========================================
+// 3. TAMPILAN ESTETIK (CUSTOM COLOR CONFIG)
+// ==========================================
+export const KumpulanTemaAesthetic = {
+  retroMint: {
+    nama: 'Retro Mint',
+    primary: '#85E3B2',    // Hijau mint segar
+    background: '#F4F9F5', // Putih kehijauan lembut
+    text: '#2C3E35',       // Abu tua gelap
+    accent: '#FFB7B2'      // Pink pastel highlight
+  },
+  cyberNeon: {
+    nama: 'Cyber Neon',
+    primary: '#00F0FF',    // Cyan neon
+    background: '#0D0E15', // Hitam sci-fi gelap
+    text: '#FFFFFF',       // Putih bersih
+    accent: '#FF007A'      // Neon pink
+  },
+  pastelSunset: {
+    nama: 'Pastel Sunset',
+    primary: '#FFC6FF',    // Ungu pastel muda
+    background: '#FFF5F5', // Krem kemerahan hangat
+    text: '#4A3E4D',       // Ungu gelap teks
+    accent: '#FDFFB6'      // Kuning pastel lembut
+  }
+};
+
+
+// ==========================================
+// 4. DATABASE SOAL DAN MATERI (MOCK DATA)
+// ==========================================
+export const databaseAplikasi: MataPelajaran[] = [
+  {
+    id: 'matematika',
+    nama: 'Matematika',
+    jenjangTersedia: ['SD', 'SMP', 'SMA'], // Matematika lengkap dari SD-SMA
+    daftarMateri: {
+      SD: [
+        {
+          id: 'mat-sd-01',
+          judul: 'Pecahan Sederhana',
+          isiKonten: 'Pecahan terdiri dari pembilang (atas) dan penyebut (bawah). Contoh: 1/2 berarti 1 bagian dari total 2 bagian.',
+          soalLatihan: [
+            {
+              id: 'sd-q1',
+              tipe: 'pilihan_ganda',
+              pertanyaan: 'Bentuk paling sederhana dari 2/4 adalah...',
+              pilihan: ['A. 1/2', 'B. 1/3', 'C. 1/4', 'D. 2/2'],
+              kunciJawaban: 'A',
+              pembahasan: 'Bagi pembilang dan penyebut dengan angka 2. Hasilnya 1/2.'
+            }
+          ]
+        }
+      ],
+      SMA: [
+        {
+          id: 'mat-sma-01',
+          judul: 'Turunan Fungsi Aljabar',
+          isiKonten: 'Ingat rumus utama turunan: Jika f(x) = x^n, maka turunan pertamanya adalah f\'(x) = n * x^(n-1).',
+          soalLatihan: [
+            {
+              id: 'sma-q1',
+              tipe: 'pilihan_ganda',
+              pertanyaan: 'Turunan pertama dari f(x) = 3x^2 adalah...',
+              pilihan: ['A. 3x', 'B. 6x', 'C. 6x^2', 'D. 2x'],
+              kunciJawaban: 'B',
+              pembahasan: 'Gunakan rumus n * x^(n-1). Kalikan pangkat dengan koefisien: 2 * 3x = 6x.'
+            },
+            {
+              id: 'sma-q2',
+              tipe: 'essay',
+              pertanyaan: 'Berapakah nilai turunan dari f(x) = 5x?',
+              kunciJawaban: '5',
+              pembahasan: 'Turunan dari x adalah 1, sehingga turunan dari 5x adalah 5.'
+            }
+          ]
+        }
+      ]
+    },
+    preTest: {
+      SD: [{ id: 'pre-sd-1', tipe: 'pilihan_ganda', pertanyaan: '1 + 1 = ...', pilihan: ['A. 2', 'B. 3'], kunciJawaban: 'A', pembahasan: 'Hitungan dasar.' }]
+    },
+    postTest: {
+      SD: [{ id: 'post-sd-1', tipe: 'pilihan_ganda', pertanyaan: '2 - 1 = ...', pilihan: ['A. 1', 'B. 0'], kunciJawaban: 'A', pembahasan: 'Hitungan dasar.' }]
+    }
+  },
+  {
+    id: 'fisika',
+    nama: 'Fisika',
+    jenjangTersedia: ['SMP', 'SMA'], // Sesuai request: Fisika dari SMP-SMA saja
+    daftarMateri: {
+      SMP: [
+        {
+          id: 'fis-smp-01',
+          judul: 'Kecepatan dan Percepatan',
+          isiKonten: 'Rumus dasar jarak dan kecepatan adalah s = v * t. Di mana s = jarak, v = kecepatan, dan t = waktu.',
+          soalLatihan: [
+            {
+              id: 'fis-q1',
+              tipe: 'pilihan_ganda',
+              pertanyaan: 'Sebuah mobil bergerak dengan kecepatan 20 m/s selama 5 detik. Jarak yang ditempuh adalah...',
+              pilihan: ['A. 4 meter', 'B. 50 meter', 'C. 100 meter', 'D. 200 meter'],
+              kunciJawaban: 'C',
+              pembahasan: 'Gunakan rumus s = v * t. Maka s = 20 * 5 = 100 meter.'
+            }
+          ]
+        }
+      ]
+    },
+    preTest: {},
+    postTest: {}
+  },
+  {
+    id: 'kimia',
+    nama: 'Kimia',
+    jenjangTersedia: ['SMP', 'SMA'], // Sesuai request: Kimia dari SMP-SMA saja
     daftarMateri: {
       SMA: [
         {
-          id: "mtk-sma-1",
-          judul: "Persamaan Kuadrat",
-          kontenMateri: "Persamaan kuadrat adalah persamaan polimonial derajat dua. Bentuk umumnya adalah $ax^2 + bx + c = 0$.",
-          preTest: [
+          id: 'kim-sma-01',
+          judul: 'Struktur Atom',
+          isiKonten: 'Atom terdiri dari Proton (positif), Elektron (negatif), dan Neutron (netral). Nomor atom menunjukkan jumlah proton.',
+          soalLatihan: [
             {
-              id: "pre-1",
-              tipe: "pilihan-ganda",
-              pertanyaan: "Berapa nilai akar dari $x^2 - 4 = 0$?",
-              opsi: ["2 dan -2", "1 dan 4", "0 dan 4", "Tidak ada"],
-              jawabanBenar: "2 dan -2",
-              pembahasan: "Menggunakan pemfaktoran: $(x-2)(x+2) = 0$, maka $x = 2$ atau $x = -2$."
+              id: 'kim-q1',
+              tipe: 'essay',
+              pertanyaan: 'Apakah nama partikel atom yang bermuatan negatif?',
+              kunciJawaban: 'elektron',
+              pembahasan: 'Partikel bermuatan negatif yang mengelilingi inti atom dinamakan elektron.'
             }
-          ],
-          latihanSoal: [
-            {
-              id: "lat-1",
-              tipe: "essay",
-              pertanyaan: "Tentukan nilai diskriminan dari $x^2 + 2x + 1 = 0$!",
-              jawabanBenar: "0",
-              pembahasan: "Rumus diskriminan $D = b^2 - 4ac$. Maka $D = 2^2 - 4(1)(1) = 4 - 4 = 0$."
-            }
-          ],
-          postTest: []
+          ]
         }
       ]
-    }
-  },
-  fisika: { nama: "Fisika", tingkat: ["SMP", "SMA"], daftarMateri: {} },
-  kimia: { nama: "Kimia", tingkat: ["SMP", "SMA"], daftarMateri: {} }
-};
-'use client';
-import { useState } from 'react';
-import { bankSoal } from '@/data/bankSoal';
-import Link from 'next/link';
-
-export default function Home() {
-  const [themeColor, setThemeColor] = useState('bg-indigo-600');
-  const [selectedMapel, setSelectedMapel] = useState('matematika');
-  const [selectedTingkat, setSelectedTingkat] = useState('SMA');
-
-  const themes = [
-    { name: 'Sunset Orange', color: 'bg-orange-500', hex: '#f97316' },
-    { name: 'Ocean Blue', color: 'bg-blue-500', hex: '#3b82f6' },
-    { name: 'Cyber Neon', color: 'bg-purple-600', hex: '#9333ea' },
-    { name: 'Mint Green', color: 'bg-emerald-500', hex: '#10b981' }
-  ];
-
-  const materiTersedia = bankSoal[selectedMapel]?.daftarMateri[selectedTingkat] || [];
-
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 p-8">
-      {/* Header & Custom Color Picker */}
-      <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center mb-12 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-        <div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900">Edu✨Aesthetic</h1>
-          <p className="text-slate-500 text-sm">Pilih gaya belajarmu sendiri</p>
-        </div>
-        <div className="flex gap-2 mt-4 md:mt-0 items-center">
-          <span className="text-xs font-semibold uppercase text-slate-400 mr-2">Tema:</span>
-          {themes.map((t) => (
-            <button
-              key={t.name}
-              onClick={() => setThemeColor(t.color)}
-              className={`w-8 h-8 rounded-full ${t.color} border-4 transition-all ${themeColor === t.color ? 'border-slate-800 scale-110' : 'border-transparent'}`}
-              title={t.name}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Grid Menu Utama */}
-      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Pilihan Mapel & Jenjang */}
-        <div className="md:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-4">
-          <div>
-            <label className="block text-xs font-bold uppercase text-slate-400 mb-2">Mata Pelajaran</label>
-            <div className="flex flex-col gap-2">
-              {Object.keys(bankSoal).map((key) => (
-                <button
-                  key={key}
-                  onClick={() => { setSelectedMapel(key); setSelectedTingkat(bankSoal[key].tingkat[0]); }}
-                  className={`w-full text-left p-3 rounded-xl font-medium capitalize transition-all ${selectedMapel === key ? `${themeColor} text-white` : 'bg-slate-100 hover:bg-slate-200'}`}
-                >
-                  {bankSoal[key].nama}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold uppercase text-slate-400 mb-2">Tingkat Sekolah</label>
-            <div className="grid grid-cols-3 gap-2">
-              {bankSoal[selectedMapel]?.tingkat.map((tingkat) => (
-                <button
-                  key={tingkat}
-                  onClick={() => setSelectedTingkat(tingkat)}
-                  className={`p-2 rounded-xl font-bold text-center border transition-all ${selectedTingkat === tingkat ? 'border-slate-800 bg-slate-900 text-white' : 'border-slate-200 hover:bg-slate-50'}`}
-                >
-                  {tingkat}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Daftar Materi */}
-        <div className="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <h2 className="text-xl font-bold mb-4 text-slate-900">Pilih Materi Modul</h2>
-          {materiTersedia.length === 0 ? (
-            <p className="text-slate-400 text-sm">Materi belum diunggah untuk tingkat ini.</p>
-          ) : (
-            <div className="flex flex-col gap-3">
-              {materiTersedia.map((materi) => (
-                <div key={materi.id} className="p-4 border border-slate-100 hover:border-slate-300 rounded-xl flex justify-between items-center transition-all">
-                  <div>
-                    <h3 className="font-semibold text-slate-800">{materi.judul}</h3>
-                    <span className="text-xs bg-slate-100 px-2 py-1 rounded text-slate-500">Tersedia: Pre-test & Post-test</span>
-                  </div>
-                  <Link href={`/belajar/${selectedMapel}-${selectedTingkat}-${materi.id}`}>
-                    <button className={`px-4 py-2 text-white font-medium text-sm rounded-xl ${themeColor} hover:opacity-90 transition-all`}>
-                      Mulai Belajar
-                    </button>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-'use client';
-import { useState } from 'react';
-import { Soal } from '@/data/bankSoal';
-
-interface QuizEngineProps {
-  daftarSoal: Soal[];
-  tipeTes: 'Pre-Test' | 'Latihan Soal' | 'Post-Test';
-  onSelesai: () => void;
-}
-
-export default function QuizEngine({ daftarSoal, tipeTes, onSelesai }: QuizEngineProps) {
-  const [jawabanUser, setJawabanUser] = useState<{ [key: string]: string }>({});
-  const [kuisSelesai, setKuisSelesai] = useState(false);
-  const [skor, setSkor] = useState(0);
-
-  const handlePilihOpsi = (soalId: string, nilai: string) => {
-    setJawabanUser(prev => ({ ...prev, [soalId]: nilai }));
-  };
-
-  const hitungHasil = () => {
-    let nilaiBenar = 0;
-    daftarSoal.forEach((soal) => {
-      // Untuk essay, kita buat lowercase agar pengecekan string lebih fleksibel
-      if (jawabanUser[soal.id]?.trim().toLowerCase() === soal.jawabanBenar.toLowerCase()) {
-        nilaiBenar++;
-      }
-    });
-    setSkor(Math.round((nilaiBenar / daftarSoal.length) * 100));
-    setKuisSelesai(true);
-  };
-
-  return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 max-w-2xl mx-auto">
-      <div className="flex justify-between items-center mb-6 pb-4 border-b">
-        <h3 className="text-lg font-black tracking-wide text-slate-900 uppercase">{tipeTes}</h3>
-        {kuisSelesai && <span className="text-xl font-bold text-emerald-600">Skor: {skor}/100</span>}
-      </div>
-
-      <div className="flex flex-col gap-6">
-        {daftarSoal.map((soal, indeks) => (
-          <div key={soal.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-            <p className="font-semibold text-slate-800 mb-3">{indeks + 1}. {soal.pertanyaan}</p>
-            
-            {/* Logika Tampilan Pilihan Ganda */}
-            {soal.tipe === 'pilihan-ganda' && soal.opsi && (
-              <div className="grid grid-cols-1 gap-2">
-                {soal.opsi.map((opsi) => (
-                  <button
-                    key={opsi}
-                    disabled={kuisSelesai}
-                    onClick={() => handlePilihOpsi(soal.id, opsi)}
-                    className={`p-3 text-left rounded-lg text-sm transition-all border ${
-                      jawabanUser[soal.id] === opsi 
-                        ? 'bg-slate-900 text-white border-slate-900' 
-                        : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
-                    }`}
-                  >
-                    {opsi}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {/* Logika Tampilan Essay */}
-            {soal.tipe === 'essay' && (
-              <input
-                type="text"
-                disabled={kuisSelesai}
-                placeholder="Ketik jawabanmu di sini..."
-                value={jawabanUser[soal.id] || ''}
-                onChange={(e) => handlePilihOpsi(soal.id, e.target.value)}
-                className="w-full p-3 rounded-lg text-sm border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-400"
-              />
-            )}
-
-            {/* BOX PEMBAHASAN (Hanya muncul jika kuis selesai dikerjakan) */}
-            {kuisSelesai && (
-              <div className="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-900">
-                <p className="font-bold mb-1">🔑 Jawaban Benar: {soal.jawabanBenar}</p>
-                <p><span className="font-bold">Pembahasan:</span> {soal.pembahasan}</p>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {!kuisSelesai ? (
-        <button
-          onClick={hitungHasil}
-          className="w-full mt-6 bg-slate-900 text-white font-bold p-3 rounded-xl hover:bg-slate-800 transition-all"
-        >
-          Kumpulkan Jawaban
-        </button>
-      ) : (
-        <button
-          onClick={onSelesai}
-          className="w-full mt-6 bg-emerald-600 text-white font-bold p-3 rounded-xl hover:bg-emerald-700 transition-all"
-        >
-          Lanjut ke Tahap Berikutnya
-        </button>
-      )}
-    </div>
-  );
-}
+    },
+    preTest: {},
+    postTest: {}
+  }
+];
