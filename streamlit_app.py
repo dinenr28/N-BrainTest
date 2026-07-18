@@ -20,7 +20,7 @@ RUMUS_MATEMATIKA = {
         """,
         "Luas & Volume (Dasar)": r"""
         * **Persegi**: $L = s \times s$
-        * **Persgi Panjang**: $L = p \times l$
+        * **Persegi Panjang**: $L = p \times l$
         * **Kubus**: $V = s^3$
         * **Balok**: $V = p \times l \times t$
         """
@@ -37,7 +37,7 @@ RUMUS_MATEMATIKA = {
         """
     },
     "SMA": {
-        "Logaritma & Finansial": r"""
+        "Logika & Finansial": r"""
         * **Logaritma**: ${^a}\log b = c \iff a^c = b$
         * **Bunga Tunggal**: $B = M_0 \times i \times t$
         * **Bunga Majemuk**: $M_t = M_0 (1 + i)^t$
@@ -57,57 +57,54 @@ def generate_10_soal(jenjang):
     soal_campuran = []
     
     if jenjang == "SD":
-        # Topik: Perhitungan, KPK/FPB, Luas/Volume, Pecahan
-        for i in range(5): # 5 Pilihan Ganda
+        for i in range(5):
             a, b, c = random.randint(10, 30), random.randint(5, 15), random.randint(2, 6)
             hasil = a + (b * c)
             soal_campuran.append({
                 "id": f"sd-pg-{i}", "tipe": "pilihan_ganda",
-                "pertanyaan": r"Berapakah hasil dari $" + f"{a} + {b} \times {c}" + r"$ ?",
+                "pertanyaan": fr"Berapakah hasil dari $ {a} + {b} \times {c} $ ?",
                 "pilihan": [f"{hasil}", f"{hasil+3}", f"{hasil-5}", f"{hasil+10}"], "kunci": f"{hasil}",
-                "pembahasan": r"Dahulukan perkalian: $" + f"{b} \times {c} = {b*c}" + r"$. Lalu $" + f"{a} + {b*c} = {hasil}" + r"$"
+                "pembahasan": fr"Dahulukan perkalian: $ {b} \times {c} = {b*c} $. Lalu $ {a} + {b*c} = {hasil} $."
             })
-        for i in range(5): # 5 Essay
+        for i in range(5):
             s = random.randint(4, 10)
             vol = s**3
             soal_campuran.append({
                 "id": f"sd-es-{i}", "tipe": "essay",
-                "pertanyaan": r"Sebuah kubus memiliki panjang rusuk $s = " + f"{s}" + r" \text{ cm}$. Berapakah Volume kubus tersebut (angka saja)?",
-                "kunci": f"{vol}", "pembahasan": r"Volume kubus: $V = s^3 = " + f"{s}^3 = {vol}" + r" \text{ cm}^3$."
+                "pertanyaan": fr"Sebuah kubus memiliki panjang rusuk $ s = {s} \text{{ cm}} $. Berapakah Volume kubus tersebut (angka saja)?",
+                "kunci": f"{vol}", "pembahasan": fr"Volume kubus: $ V = s^3 = {s}^3 = {vol} \text{{ cm}}^3 $."
             })
             
     elif jenjang == "SMP":
-        # Topik: Mencari x, Substitusi/Eliminasi, SPLDV, Bangun Ruang
         for i in range(5):
             x_val = random.randint(2, 7)
             a, b = random.randint(2, 5), random.randint(1, 10)
             c = (a * x_val) + b
             soal_campuran.append({
                 "id": f"smp-pg-{i}", "tipe": "pilihan_ganda",
-                "pertanyaan": r"Jika diketahui persamaan $" + f"{a}x + {b} = {c}" + r"$, tentukan nilai $x$!",
+                "pertanyaan": fr"Jika diketahui persamaan $ {a}x + {b} = {c} $, tentukan nilai $ x $!",
                 "pilihan": [f"{x_val}", f"{x_val+1}", f"{x_val-2}", f"{x_val+3}"], "kunci": f"{x_val}",
-                "pembahasan": r"Pindah ruas: $" + f"{a}x = {c} - {b} \rightarrow {a}x = {a*x_val} \rightarrow x = {x_val}" + r"$"
+                "pembahasan": fr"Pindah ruas: $ {a}x = {c} - {b} \rightarrow {a}x = {a*x_val} \rightarrow x = {x_val} $."
             })
         for i in range(5):
             x, y = random.randint(1, 4), random.randint(1, 4)
             c1, c2 = x + y, x - y
             soal_campuran.append({
                 "id": f"smp-es-{i}", "tipe": "essay",
-                "pertanyaan": r"Diketahui sistem persamaan linear (SPLDV): $x + y = " + f"{c1}" + r"$ dan $x - y = " + f"{c2}" + r"$. Berapakah nilai dari $x$?",
-                "kunci": f"{x}", "pembahasan": r"Eliminasi dengan menjumlahkan kedua persamaan: $2x = " + f"{c1+c2} \rightarrow x = {x}" + r"$"
+                "pertanyaan": fr"Diketahui sistem persamaan linear (SPLDV): $ x + y = {c1} $ dan $ x - y = {c2} $. Berapakah nilai dari $ x $?",
+                "kunci": f"{x}", "pembahasan": fr"Eliminasi dengan menjumlahkan kedua persamaan: $ 2x = {c1+c2} \rightarrow x = {x} $."
             })
             
     else: # SMA
-        # Topik: Logaritma, Bunga, Integral, SPLTV
         for i in range(5):
             n = random.randint(2, 3)
             a = n + 1
             hasil = (2**a) - (1**a)
             soal_campuran.append({
                 "id": f"sma-pg-{i}", "tipe": "pilihan_ganda",
-                "pertanyaan": r"Tentukan hasil nilai dari integral tentu berikut: $$ \int_{1}^{2} " + f"{a}x^{n}" + r" \, dx $$",
+                "pertanyaan": fr"Tentukan hasil nilai dari integral tentu berikut: $$ \int_{{1}}^{{2}} {a}x^{{{n}}} \, dx $$",
                 "pilihan": [f"{hasil}", f"{hasil+2}", f"{hasil-1}", f"{hasil*2}"], "kunci": f"{hasil}",
-                "pembahasan": r"Antiturunan dari $" + f"{a}x^{n}" + r"$ adalah $x^" + f"{a}" + r"$. Evaluasi batas: $2^" + f"{a}" + r" - 1^" + f"{a}" + r" = " + f"{hasil}" + r"$"
+                "pembahasan": fr"Antiturunan dari $ {a}x^{{{n}}} $ adalah $ x^{{{a}}} $. Evaluasi batas: $ 2^{{{a}}} - 1^{{{a}}} = {hasil} $."
             })
         for i in range(5):
             basis = random.choice([2, 3, 5])
@@ -115,8 +112,8 @@ def generate_10_soal(jenjang):
             numerus = basis**pangkat
             soal_campuran.append({
                 "id": f"sma-es-{i}", "tipe": "essay",
-                "pertanyaan": r"Berapakah nilai eksak dari ekspresi logaritma berikut: ${^" + f"{basis}" + r"}\log " + f"{numerus}" + r"$?",
-                "kunci": f"{pangkat}", "pembahasan": r"Karena $" + f"{basis}^{pangkat} = {numerus}" + r"$, maka nilai logaritmanya adalah ${" + f"{pangkat}" + r"}$."
+                "pertanyaan": fr"Berapakah nilai eksak dari ekspresi logaritma berikut: ${{^{{{basis}}}}\log {numerus}}$?",
+                "kunci": f"{pangkat}", "pembahasan": fr"Karena $ {basis}^{{{pangkat}}} = {numerus} $, maka nilai logaritmanya adalah $ {pangkat} $."
             })
             
     random.shuffle(soal_campuran)
@@ -142,15 +139,12 @@ menu = st.sidebar.radio("Navigasi Menu:", ["🏠 Menu Utama & Kuis", "📖 Pelaj
 if menu == "🏠 Menu Utama & Kuis":
     st.title("🧠 Menu Utama - Ujian Kuantitatif")
     
-    # Pilihan Jenjang
     jenjang = st.selectbox("Pilih Jenjang Sekolah:", ["SD", "SMP", "SMA"])
     
-    # Deteksi ganti tingkat sekolah buat auto reset kuis
     if st.session_state.jenjang_pilihan != jenjang:
         st.session_state.jenjang_pilihan = jenjang
         st.session_state.soal_aktif = None
 
-    # Tombol Aksi Kuis
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
         if st.button("🚀 Mulai / Acak Ujian Sesi Baru"):
@@ -170,7 +164,6 @@ if menu == "🏠 Menu Utama & Kuis":
             st.markdown(soal["pertanyaan"])
             
             if soal["tipe"] == "pilihan_ganda":
-                # Ditambahkan opsi None di indeks awal agar default kosong/belum menjawab
                 opsi_pg = [None] + soal["pilihan"]
                 pilihan_terpilih = st.radio("Pilih Opsi Jawaban:", opsi_pg, key=f"soal-{soal['id']}", format_func=lambda x: "Belum Memilih..." if x is None else x)
                 jawaban_user[soal["id"]] = pilihan_terpilih
@@ -218,16 +211,13 @@ elif menu == "📖 Pelajaran (Rumus)":
 elif menu == "🧮 Kalkulator Scientific":
     st.title("⚡ Scientific Calculator Pad")
     
-    # Menampilkan string operasi saat ini
     st.text_input("Screen / Nilai Operasi:", value=st.session_state.calc_expression, disabled=True)
     
-    # Layout Tombol Fisik
     row1_c1, row1_c2, row1_c3, row1_c4, row1_c5 = st.columns(5)
     row2_c1, row2_c2, row2_c3, row2_c4, row2_c5 = st.columns(5)
     row3_c1, row3_c2, row3_c3, row3_c4, row3_c5 = st.columns(5)
     row4_c1, row4_c2, row4_c3, row4_c4, row4_c5 = st.columns(5)
     
-    # Fungsi pembantu append karakter
     def add_to_calc(char):
         st.session_state.calc_expression += str(char)
         
@@ -259,7 +249,6 @@ elif menu == "🧮 Kalkulator Scientific":
     if row4_c4.button("-"): add_to_calc("-")
     if row4_c5.button(")"): add_to_calc(")")
 
-    # Baris Tambahan Konfirmasi Akhir
     col_fin1, col_fin2, col_fin3 = st.columns([2, 1, 2])
     if col_fin1.button("0"): add_to_calc("0")
     if col_fin2.button("+"): add_to_calc("+")
@@ -267,7 +256,6 @@ elif menu == "🧮 Kalkulator Scientific":
     if col_fin3.button("== HITUNG HASIL =="):
         try:
             expr = st.session_state.calc_expression
-            # Mengamankan evaluasi string matematika dasar & math library
             hasil_eval = eval(expr, {"math": math})
             st.success(f"Hasil Evaluasi Akhir: {hasil_eval}")
             st.session_state.calc_expression = str(hasil_eval)
