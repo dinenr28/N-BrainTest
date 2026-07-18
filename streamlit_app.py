@@ -62,17 +62,17 @@ def generate_10_soal(jenjang):
             hasil = a + (b * c)
             soal_campuran.append({
                 "id": f"sd-pg-{i}", "tipe": "pilihan_ganda",
-                "pertanyaan": fr"Berapakah hasil dari $ {a} + {b} \times {c} $ ?",
+                "pertanyaan": "Berapakah hasil dari $ " + str(a) + " + " + str(b) + " \\times " + str(c) + " $ ?",
                 "pilihan": [f"{hasil}", f"{hasil+3}", f"{hasil-5}", f"{hasil+10}"], "kunci": f"{hasil}",
-                "pembahasan": fr"Dahulukan perkalian: $ {b} \times {c} = {b*c} $. Lalu $ {a} + {b*c} = {hasil} $."
+                "pembahasan": "Dahulukan perkalian: $ " + str(b) + " \\times " + str(c) + " = " + str(b*c) + " $. Lalu $ " + str(a) + " + " + str(b*c) + " = " + str(hasil) + " $."
             })
         for i in range(5):
             s = random.randint(4, 10)
             vol = s**3
             soal_campuran.append({
                 "id": f"sd-es-{i}", "tipe": "essay",
-                "pertanyaan": fr"Sebuah kubus memiliki panjang rusuk $ s = {s} \text{{ cm}} $. Berapakah Volume kubus tersebut (angka saja)?",
-                "kunci": f"{vol}", "pembahasan": fr"Volume kubus: $ V = s^3 = {s}^3 = {vol} \text{{ cm}}^3 $."
+                "pertanyaan": "Sebuah kubus memiliki panjang rusuk $ s = " + str(s) + " \\text{ cm} $. Berapakah Volume kubus tersebut (angka saja)?",
+                "kunci": f"{vol}", "pembahasan": "Volume kubus: $ V = s^3 = " + str(s) + "^3 = " + str(vol) + " \\text{ cm}^3 $."
             })
             
     elif jenjang == "SMP":
@@ -82,17 +82,17 @@ def generate_10_soal(jenjang):
             c = (a * x_val) + b
             soal_campuran.append({
                 "id": f"smp-pg-{i}", "tipe": "pilihan_ganda",
-                "pertanyaan": fr"Jika diketahui persamaan $ {a}x + {b} = {c} $, tentukan nilai $ x $!",
+                "pertanyaan": "Jika diketahui persamaan $ " + str(a) + "x + " + str(b) + " = " + str(c) + " $, tentukan nilai $ x $!",
                 "pilihan": [f"{x_val}", f"{x_val+1}", f"{x_val-2}", f"{x_val+3}"], "kunci": f"{x_val}",
-                "pembahasan": fr"Pindah ruas: $ {a}x = {c} - {b} \rightarrow {a}x = {a*x_val} \rightarrow x = {x_val} $."
+                "pembahasan": "Pindah ruas: $ " + str(a) + "x = " + str(c) + " - " + str(b) + " \\rightarrow " + str(a) + "x = " + str(a*x_val) + " \\rightarrow x = " + str(x_val) + " $."
             })
         for i in range(5):
             x, y = random.randint(1, 4), random.randint(1, 4)
             c1, c2 = x + y, x - y
             soal_campuran.append({
                 "id": f"smp-es-{i}", "tipe": "essay",
-                "pertanyaan": fr"Diketahui sistem persamaan linear (SPLDV): $ x + y = {c1} $ dan $ x - y = {c2} $. Berapakah nilai dari $ x $?",
-                "kunci": f"{x}", "pembahasan": fr"Eliminasi dengan menjumlahkan kedua persamaan: $ 2x = {c1+c2} \rightarrow x = {x} $."
+                "pertanyaan": "Diketahui sistem persamaan linear (SPLDV): $ x + y = " + str(c1) + " $ dan $ x - y = " + str(c2) + " $. Berapakah nilai dari $ x $?",
+                "kunci": f"{x}", "pembahasan": "Eliminasi dengan menjumlahkan kedua persamaan: $ 2x = " + str(c1+c2) + " \\rightarrow x = " + str(x) + " $."
             })
             
     else: # SMA
@@ -102,9 +102,9 @@ def generate_10_soal(jenjang):
             hasil = (2**a) - (1**a)
             soal_campuran.append({
                 "id": f"sma-pg-{i}", "tipe": "pilihan_ganda",
-                "pertanyaan": fr"Tentukan hasil nilai dari integral tentu berikut: $$ \int_{{1}}^{{2}} {a}x^{{{n}}} \, dx $$",
+                "pertanyaan": "Tentukan hasil nilai dari integral tentu berikut: $$ \\int_{1}^{2} " + str(a) + "x^{" + str(n) + "} \\, dx $$",
                 "pilihan": [f"{hasil}", f"{hasil+2}", f"{hasil-1}", f"{hasil*2}"], "kunci": f"{hasil}",
-                "pembahasan": fr"Antiturunan dari $ {a}x^{{{n}}} $ adalah $ x^{{{a}}} $. Evaluasi batas: $ 2^{{{a}}} - 1^{{{a}}} = {hasil} $."
+                "pembahasan": "Antiturunan dari $ " + str(a) + "x^{" + str(n) + "} $ adalah $ x^{" + str(a) + "} $. Evaluasi batas: $ 2^{" + str(a) + "} - 1^{" + str(a) + "} = " + str(hasil) + " $."
             })
         for i in range(5):
             basis = random.choice([2, 3, 5])
@@ -112,9 +112,9 @@ def generate_10_soal(jenjang):
             numerus = basis**pangkat
             soal_campuran.append({
                 "id": f"sma-es-{i}", "tipe": "essay",
-                # Bagian kurung kurawal di bawah ini sudah diperbaiki total agar stabil
-                "pertanyaan": fr"Berapakah nilai eksak dari ekspresi logaritma berikut: $ {{^{{{basis}}}}\log {numerus}} $?",
-                "kunci": f"{pangkat}", "pembahasan": fr"Karena $ {basis}^{{{pangkat}}} = {numerus} $, maka nilai logaritmanya adalah $ {pangkat} $."
+                # Menggunakan string concatenation biasa (+) agar 100% aman dari SyntaxError f-string
+                "pertanyaan": "Berapakah nilai eksak dari ekspresi logaritma berikut: $ {^{" + str(basis) + "}\\log " + str(numerus) + "} $?",
+                "kunci": f"{pangkat}", "pembahasan": "Karena $ " + str(basis) + "^{" + str(pangkat) + "} = " + str(numerus) + " $, maka nilai logaritmanya adalah $ " + str(pangkat) + " $."
             })
             
     random.shuffle(soal_campuran)
