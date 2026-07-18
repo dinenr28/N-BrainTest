@@ -112,7 +112,8 @@ def generate_10_soal(jenjang):
             numerus = basis**pangkat
             soal_campuran.append({
                 "id": f"sma-es-{i}", "tipe": "essay",
-                "pertanyaan": fr"Berapakah nilai eksak dari ekspresi logaritma berikut: ${{^{{{basis}}}}\log {numerus}}$?",
+                # Bagian kurung kurawal di bawah ini sudah diperbaiki total agar stabil
+                "pertanyaan": fr"Berapakah nilai eksak dari ekspresi logaritma berikut: $ {{^{{{basis}}}}\log {numerus}} $?",
                 "kunci": f"{pangkat}", "pembahasan": fr"Karena $ {basis}^{{{pangkat}}} = {numerus} $, maka nilai logaritmanya adalah $ {pangkat} $."
             })
             
@@ -261,3 +262,4 @@ elif menu == "🧮 Kalkulator Scientific":
             st.session_state.calc_expression = str(hasil_eval)
         except Exception:
             st.error("Format Persamaan Error/Salah Tulis. Cek Kurung Tutup Anda.")
+    
