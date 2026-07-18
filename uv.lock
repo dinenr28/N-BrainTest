@@ -1,72 +1,31 @@
 // ==========================================
-// 1. DEFINISI TIPE DATA (TYPES)
+// 1. RUMUS LOGIKA PENILAIAN (UTILS)
 // ==========================================
-export type Jenjang = 'SD' | 'SMP' | 'SMA';
-export type TipeSoal = 'pilihan_ganda' | 'essay';
-export type JenisTes = 'pre_test' | 'latihan_materi' | 'post_test';
-
-export interface Soal {
-  id: string;
-  tipe: TipeSoal;
-  pertanyaan: string;
-  pilihan?: string[]; // Hanya untuk pilihan_ganda
-  kunciJawaban: string; // Kunci jawaban (A/B/C/D atau kata kunci essay)
-  pembahasan: string; // Pembahasan di akhir sesi
-}
-
-export interface Materi {
-  id: string;
-  judul: string;
-  isiKonten: string; // Materi sebelum ngerjain soal
-  soalLatihan: Soal[];
-}
-
-export interface MataPelajaran {
-  id: 'matematika' | 'fisika' | 'kimia';
-  nama: string;
-  jenjangTersedia: Jenjang[];
-  daftarMateri: {
-    [key in Jenjang]?: Materi[];
-  };
-  preTest: { [key in Jenjang]?: Soal[] };
-  postTest: { [key in Jenjang]?: Soal[] };
-}
-
-export interface JawabanUser {
-  soalId: string;
-  jawaban: string;
-}
-
-
-// ==========================================
-// 2. RUMUS LOGIKA PENILAIAN (UTILS)
-// ==========================================
-export const hitungSkorAkhir = (daftarSoal: Soal[], daftarJawabanUser: JawabanUser[]): number => {
-  if (daftarSoal.length === 0) return 0;
+export const hitungSkorAkhir = (daftarSoal, daftarJawabanUser) => {
+  if (!daftarSoal || daftarSoal.length === 0) return 0;
   
   let benar = 0;
 
   daftarSoal.forEach((soal) => {
-    const userAns = daftarJawabanUser.find((j) => j.soalId === soal.id)?.jawaban.trim().toLowerCase();
-    const correctAns = soal.kunciJawaban.trim().toLowerCase();
+    const userAnsItem = daftarJawabanUser.find((j) => j.soalId === soal.id);
+    if (!userAnsItem || !userAnsItem.jawaban) return; // Skip kalau tidak dijawab
 
-    if (!userAns) return; // Jika tidak dijawab, lanjut ke soal berikutnya
+    const userAns = userAnsItem.jawaban.trim().toLowerCase();
+    const correctAns = soal.kunciJawaban.trim().toLowerCase();
 
     if (soal.tipe === 'pilihan_ganda') {
       if (userAns === correctAns) benar++;
     } else {
-      // Logika essay: benar jika jawaban user mengandung kata kunci jawaban
+      // Logika essay: fleksibel, benar jika mirip atau mengandung kata kunci
       if (correctAns.includes(userAns) || userAns.includes(correctAns)) benar++;
     }
   });
 
-  // Rumus matematika skor skala 0 - 100
   return Math.round((benar / daftarSoal.length) * 100);
 };
 
-
 // ==========================================
-// 3. TAMPILAN ESTETIK (CUSTOM COLOR CONFIG)
+// 2. TAMPILAN ESTETIK (CUSTOM COLOR CONFIG)
 // ==========================================
 export const KumpulanTemaAesthetic = {
   retroMint: {
@@ -92,15 +51,14 @@ export const KumpulanTemaAesthetic = {
   }
 };
 
-
 // ==========================================
-// 4. DATABASE SOAL DAN MATERI (MOCK DATA)
+// 3. DATABASE SOAL DAN MATERI
 // ==========================================
-export const databaseAplikasi: MataPelajaran[] = [
+export const databaseAplikasi = [
   {
     id: 'matematika',
     nama: 'Matematika',
-    jenjangTersedia: ['SD', 'SMP', 'SMA'], // Matematika lengkap dari SD-SMA
+    jenjangTersedia: ['SD', 'SMP', 'SMA'],
     daftarMateri: {
       SD: [
         {
@@ -145,16 +103,20 @@ export const databaseAplikasi: MataPelajaran[] = [
       ]
     },
     preTest: {
-      SD: [{ id: 'pre-sd-1', tipe: 'pilihan_ganda', pertanyaan: '1 + 1 = ...', pilihan: ['A. 2', 'B. 3'], kunciJawaban: 'A', pembahasan: 'Hitungan dasar.' }]
+      SD: [{ id: 'pre-mat-sd-1', tipe: 'pilihan_ganda', pertanyaan: '1 + 1 = ...', pilihan: ['A. 2', 'B. 3'], kunciJawaban: 'A', pembahasan: 'Hitungan dasar penjumlahan.' }],
+      SMP: [],
+      SMA: []
     },
     postTest: {
-      SD: [{ id: 'post-sd-1', tipe: 'pilihan_ganda', pertanyaan: '2 - 1 = ...', pilihan: ['A. 1', 'B. 0'], kunciJawaban: 'A', pembahasan: 'Hitungan dasar.' }]
+      SD: [{ id: 'post-mat-sd-1', tipe: 'pilihan_ganda', pertanyaan: '2 - 1 = ...', pilihan: ['A. 1', 'B. 0'], kunciJawaban: 'A', pembahasan: 'Hitungan dasar pengurangan.' }],
+      SMP: [],
+      SMA: []
     }
   },
   {
     id: 'fisika',
     nama: 'Fisika',
-    jenjangTersedia: ['SMP', 'SMA'], // Sesuai request: Fisika dari SMP-SMA saja
+    jenjangTersedia: ['SMP', 'SMA'], // Hanya SMP dan SMA
     daftarMateri: {
       SMP: [
         {
@@ -174,13 +136,13 @@ export const databaseAplikasi: MataPelajaran[] = [
         }
       ]
     },
-    preTest: {},
-    postTest: {}
+    preTest: { SMP: [], SMA: [] },
+    postTest: { SMP: [], SMA: [] }
   },
   {
     id: 'kimia',
     nama: 'Kimia',
-    jenjangTersedia: ['SMP', 'SMA'], // Sesuai request: Kimia dari SMP-SMA saja
+    jenjangTersedia: ['SMP', 'SMA'], // Hanya SMP dan SMA
     daftarMateri: {
       SMA: [
         {
@@ -199,7 +161,7 @@ export const databaseAplikasi: MataPelajaran[] = [
         }
       ]
     },
-    preTest: {},
-    postTest: {}
+    preTest: { SMP: [], SMA: [] },
+    postTest: { SMP: [], SMA: [] }
   }
 ];
