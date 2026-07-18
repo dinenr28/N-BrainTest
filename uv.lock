@@ -1,167 +1,215 @@
-// ==========================================
-// 1. RUMUS LOGIKA PENILAIAN (UTILS)
-// ==========================================
-export const hitungSkorAkhir = (daftarSoal, daftarJawabanUser) => {
-  if (!daftarSoal || daftarSoal.length === 0) return 0;
-  
-  let benar = 0;
+import math
 
-  daftarSoal.forEach((soal) => {
-    const userAnsItem = daftarJawabanUser.find((j) => j.soalId === soal.id);
-    if (!userAnsItem || !userAnsItem.jawaban) return; // Skip kalau tidak dijawab
+# ==========================================
+# 1. RUMUS LOGIKA EVALUASI NILAI
+# ==========================================
+def hitung_skor_akhir(daftar_soal, jawaban_user):
+    """
+    Menghitung nilai evaluasi (Skala 0-100) untuk Pilihan Ganda dan Essay.
+    jawaban_user berupa dictionary format: { "soal_id": "jawaban_anda" }
+    """
+    if not daftar_soal:
+        return 0
+        
+    benar = 0
+    for soal in daftar_soal:
+        soal_id = soal.get("id")
+        # Jika soal tidak dijawab oleh user, lewati
+        if soal_id not in jawaban_user:
+            continue
+            
+        user_ans = str(jawaban_user[soal_id]).strip().lower()
+        kunci = str(soal.get("kunci_jawaban")).strip().lower()
+        
+        if soal.get("tipe") == "pilihan_ganda":
+            if user_ans == kunci:
+                benar += 1
+        elif soal.get("tipe") == "essay":
+            # Logika fleksibel essay: benar jika mengandung kata kunci
+            if kunci in user_ans or user_ans in kunci:
+                benar += 1
+                
+    return round((benar / len(daftar_soal)) * 100)
 
-    const userAns = userAnsItem.jawaban.trim().toLowerCase();
-    const correctAns = soal.kunciJawaban.trim().toLowerCase();
 
-    if (soal.tipe === 'pilihan_ganda') {
-      if (userAns === correctAns) benar++;
-    } else {
-      // Logika essay: fleksibel, benar jika mirip atau mengandung kata kunci
-      if (correctAns.includes(userAns) || userAns.includes(correctAns)) benar++;
+# ==========================================
+# 2. TAMPILAN ESTETIK (CUSTOM COLOR CONFIG)
+# ==========================================
+KUMPULAN_TEMA = {
+    "retro_mint": {
+        "nama": "Retro Mint",
+        "primary": "#85E3B2",    # Hijau mint segar
+        "background": "#F4F9F5", # Putih kehijauan lembut
+        "text": "#2C3E35",       # Abu tua gelap
+        "accent": "#FFB7B2"      # Pink pastel untuk highlight
+    },
+    "cyber_neon": {
+        "nama": "Cyber Neon",
+        "primary": "#00F0FF",    # Cyan neon
+        "background": "#0D0E15", # Hitam sci-fi gelap
+        "text": "#FFFFFF",
+        "accent": "#FF007A"      # Neon pink
+    },
+    "pastel_sunset": {
+        "nama": "Pastel Sunset",
+        "primary": "#FFC6FF",    # Ungu pastel muda
+        "background": "#FFF5F5", # Krem kemerahan hangat
+        "text": "#4A3E4D",
+        "accent": "#FDFFB6"      # Kuning pastel lembut
     }
-  });
+}
 
-  return Math.round((benar / daftarSoal.length) * 100);
-};
 
-// ==========================================
-// 2. TAMPILAN ESTETIK (CUSTOM COLOR CONFIG)
-// ==========================================
-export const KumpulanTemaAesthetic = {
-  retroMint: {
-    nama: 'Retro Mint',
-    primary: '#85E3B2',    // Hijau mint segar
-    background: '#F4F9F5', // Putih kehijauan lembut
-    text: '#2C3E35',       // Abu tua gelap
-    accent: '#FFB7B2'      // Pink pastel highlight
-  },
-  cyberNeon: {
-    nama: 'Cyber Neon',
-    primary: '#00F0FF',    // Cyan neon
-    background: '#0D0E15', // Hitam sci-fi gelap
-    text: '#FFFFFF',       // Putih bersih
-    accent: '#FF007A'      // Neon pink
-  },
-  pastelSunset: {
-    nama: 'Pastel Sunset',
-    primary: '#FFC6FF',    // Ungu pastel muda
-    background: '#FFF5F5', // Krem kemerahan hangat
-    text: '#4A3E4D',       // Ungu gelap teks
-    accent: '#FDFFB6'      // Kuning pastel lembut
-  }
-};
-
-// ==========================================
-// 3. DATABASE SOAL DAN MATERI
-// ==========================================
-export const databaseAplikasi = [
-  {
-    id: 'matematika',
-    nama: 'Matematika',
-    jenjangTersedia: ['SD', 'SMP', 'SMA'],
-    daftarMateri: {
-      SD: [
-        {
-          id: 'mat-sd-01',
-          judul: 'Pecahan Sederhana',
-          isiKonten: 'Pecahan terdiri dari pembilang (atas) dan penyebut (bawah). Contoh: 1/2 berarti 1 bagian dari total 2 bagian.',
-          soalLatihan: [
-            {
-              id: 'sd-q1',
-              tipe: 'pilihan_ganda',
-              pertanyaan: 'Bentuk paling sederhana dari 2/4 adalah...',
-              pilihan: ['A. 1/2', 'B. 1/3', 'C. 1/4', 'D. 2/2'],
-              kunciJawaban: 'A',
-              pembahasan: 'Bagi pembilang dan penyebut dengan angka 2. Hasilnya 1/2.'
-            }
-          ]
+# ==========================================
+# 3. DATABASE SOAL DAN MATERI UTAMA
+# ==========================================
+DATABASE_APLIKASI = [
+    {
+        "id": "matematika",
+        "nama": "Matematika",
+        "jenjang_tersedia": ["SD", "SMP", "SMA"], # Lengkap SD-SMA
+        "daftar_materi": {
+            "SD": [
+                {
+                    "id": "mat-sd-01",
+                    "judul": "Pecahan Sederhana",
+                    "isi_konten": "Pecahan terdiri dari pembilang (atas) dan penyebut (bawah). Contoh: 1/2 berarti 1 bagian dari total 2 bagian.",
+                    "soal_latihan": [
+                        {
+                            "id": "sd-q1",
+                            "tipe": "pilihan_ganda",
+                            "pertanyaan": "Bentuk paling sederhana dari 2/4 adalah...",
+                            "pilihan": ["A. 1/2", "B. 1/3", "C. 1/4", "D. 2/2"],
+                            "kunci_jawaban": "A",
+                            "pembahasan": "Bagi pembilang dan penyebut dengan angka 2. Hasilnya 1/2."
+                        }
+                    ]
+                }
+            ],
+            "SMP": [],
+            "SMA": [
+                {
+                    "id": "mat-sma-01",
+                    "judul": "Turunan Fungsi Aljabar",
+                    "isi_konten": "Ingat rumus utama turunan: Jika f(x) = x^n, maka turunan pertamanya adalah f'(x) = n * x^(n-1).",
+                    "soal_latihan": [
+                        {
+                            "id": "sma-q1",
+                            "tipe": "pilihan_ganda",
+                            "pertanyaan": "Turunan pertama dari f(x) = 3x^2 adalah...",
+                            "pilihan": ["A. 3x", "B. 6x", "C. 6x^2", "D. 2x"],
+                            "kunci_jawaban": "B",
+                            "pembahasan": "Gunakan rumus n * x^(n-1). Kalikan pangkat dengan koefisien: 2 * 3x = 6x."
+                        },
+                        {
+                            "id": "sma-q2",
+                            "tipe": "essay",
+                            "pertanyaan": "Berapakah nilai turunan dari f(x) = 5x?",
+                            "kunci_jawaban": "5",
+                            "pembahasan": "Turunan dari x adalah 1, sehingga turunan dari 5x adalah 5."
+                        }
+                    ]
+                }
+            ]
+        },
+        "pre_test": {
+            "SD": [{"id": "pre-mat-sd", "tipe": "pilihan_ganda", "pertanyaan": "1 + 1 = ...", "pilihan": ["A. 2", "B. 3"], "kunci_jawaban": "A", "pembahasan": "Penjumlahan dasar."}],
+            "SMP": [],
+            "SMA": []
+        },
+        "post_test": {
+            "SD": [{"id": "post-mat-sd", "tipe": "pilihan_ganda", "pertanyaan": "2 - 1 = ...", "pilihan": ["A. 1", "B. 0"], "kunci_jawaban": "A", "pembahasan": "Pengurangan dasar."}],
+            "SMP": [],
+            "SMA": []
         }
-      ],
-      SMA: [
-        {
-          id: 'mat-sma-01',
-          judul: 'Turunan Fungsi Aljabar',
-          isiKonten: 'Ingat rumus utama turunan: Jika f(x) = x^n, maka turunan pertamanya adalah f\'(x) = n * x^(n-1).',
-          soalLatihan: [
-            {
-              id: 'sma-q1',
-              tipe: 'pilihan_ganda',
-              pertanyaan: 'Turunan pertama dari f(x) = 3x^2 adalah...',
-              pilihan: ['A. 3x', 'B. 6x', 'C. 6x^2', 'D. 2x'],
-              kunciJawaban: 'B',
-              pembahasan: 'Gunakan rumus n * x^(n-1). Kalikan pangkat dengan koefisien: 2 * 3x = 6x.'
-            },
-            {
-              id: 'sma-q2',
-              tipe: 'essay',
-              pertanyaan: 'Berapakah nilai turunan dari f(x) = 5x?',
-              kunciJawaban: '5',
-              pembahasan: 'Turunan dari x adalah 1, sehingga turunan dari 5x adalah 5.'
-            }
-          ]
-        }
-      ]
     },
-    preTest: {
-      SD: [{ id: 'pre-mat-sd-1', tipe: 'pilihan_ganda', pertanyaan: '1 + 1 = ...', pilihan: ['A. 2', 'B. 3'], kunciJawaban: 'A', pembahasan: 'Hitungan dasar penjumlahan.' }],
-      SMP: [],
-      SMA: []
+    {
+        "id": "fisika",
+        "nama": "Fisika",
+        "jenjang_tersedia": ["SMP", "SMA"], # Sesuai batasan request (SMP-SMA)
+        "daftar_materi": {
+            "SMP": [
+                {
+                    "id": "fis-smp-01",
+                    "judul": "Kecepatan dan Percepatan",
+                    "isi_konten": "Rumus dasar jarak dan kecepatan adalah s = v * t. Di mana s = jarak, v = kecepatan, dan t = waktu.",
+                    "soal_latihan": [
+                        {
+                            "id": "fis-q1",
+                            "tipe": "pilihan_ganda",
+                            "pertanyaan": "Sebuah mobil bergerak dengan kecepatan 20 m/s selama 5 detik. Jarak yang ditempuh adalah...",
+                            "pilihan": ["A. 4 meter", "B. 50 meter", "C. 100 meter", "D. 200 meter"],
+                            "kunci_jawaban": "C",
+                            "pembahasan": "Gunakan rumus s = v * t. Maka s = 20 * 5 = 100 meter."
+                        }
+                    ]
+                }
+            ],
+            "SMA": []
+        },
+        "pre_test": {"SMP": [], "SMA": []},
+        "post_test": {"SMP": [], "SMA": []}
     },
-    postTest: {
-      SD: [{ id: 'post-mat-sd-1', tipe: 'pilihan_ganda', pertanyaan: '2 - 1 = ...', pilihan: ['A. 1', 'B. 0'], kunciJawaban: 'A', pembahasan: 'Hitungan dasar pengurangan.' }],
-      SMP: [],
-      SMA: []
+    {
+        "id": "kimia",
+        "nama": "Kimia",
+        "jenjang_tersedia": ["SMP", "SMA"], # Sesuai batasan request (SMP-SMA)
+        "daftar_materi": {
+            "SMA": [
+                {
+                    "id": "kim-sma-01",
+                    "judul": "Struktur Atom",
+                    "isi_konten": "Atom terdiri dari Proton (positif), Elektron (negatif), dan Neutron (netral). Nomor atom menunjukkan jumlah proton.",
+                    "soal_latihan": [
+                        {
+                            "id": "kim-q1",
+                            "tipe": "essay",
+                            "pertanyaan": "Apakah nama partikel atom yang bermuatan negatif?",
+                            "kunci_jawaban": "elektron",
+                            "pembahasan": "Partikel bermuatan negatif yang mengelilingi inti atom dinamakan elektron."
+                        }
+                    ]
+                }
+            ]
+        },
+        "pre_test": {"SMP": [], "SMA": []},
+        "post_test": {"SMP": [], "SMA": []}
     }
-  },
-  {
-    id: 'fisika',
-    nama: 'Fisika',
-    jenjangTersedia: ['SMP', 'SMA'], // Hanya SMP dan SMA
-    daftarMateri: {
-      SMP: [
-        {
-          id: 'fis-smp-01',
-          judul: 'Kecepatan dan Percepatan',
-          isiKonten: 'Rumus dasar jarak dan kecepatan adalah s = v * t. Di mana s = jarak, v = kecepatan, dan t = waktu.',
-          soalLatihan: [
-            {
-              id: 'fis-q1',
-              tipe: 'pilihan_ganda',
-              pertanyaan: 'Sebuah mobil bergerak dengan kecepatan 20 m/s selama 5 detik. Jarak yang ditempuh adalah...',
-              pilihan: ['A. 4 meter', 'B. 50 meter', 'C. 100 meter', 'D. 200 meter'],
-              kunciJawaban: 'C',
-              pembahasan: 'Gunakan rumus s = v * t. Maka s = 20 * 5 = 100 meter.'
-            }
-          ]
-        }
-      ]
-    },
-    preTest: { SMP: [], SMA: [] },
-    postTest: { SMP: [], SMA: [] }
-  },
-  {
-    id: 'kimia',
-    nama: 'Kimia',
-    jenjangTersedia: ['SMP', 'SMA'], // Hanya SMP dan SMA
-    daftarMateri: {
-      SMA: [
-        {
-          id: 'kim-sma-01',
-          judul: 'Struktur Atom',
-          isiKonten: 'Atom terdiri dari Proton (positif), Elektron (negatif), dan Neutron (netral). Nomor atom menunjukkan jumlah proton.',
-          soalLatihan: [
-            {
-              id: 'kim-q1',
-              tipe: 'essay',
-              pertanyaan: 'Apakah nama partikel atom yang bermuatan negatif?',
-              kunciJawaban: 'elektron',
-              pembahasan: 'Partikel bermuatan negatif yang mengelilingi inti atom dinamakan elektron.'
-            }
-          ]
-        }
-      ]
-    },
-    preTest: { SMP: [], SMA: [] },
-    postTest: { SMP: [], SMA: [] }
-  }
-];
+]
+
+
+# ==========================================
+# 4. CONTOH SIMULASI PENGGUNAAN DI PYTHON
+# ==========================================
+if __name__ == "__main__":
+    print("--- Simulasi Aplikasi Belajar ---")
+    
+    # 1. Pilih Tema Estetik
+    tema_aktif = KUMPULAN_TEMA["retro_mint"]
+    print(f"Tema warna yang diterapkan: {tema_aktif['nama']} (Background: {tema_aktif['background']})")
+    
+    # 2. Ambil Materi Matematika SMA
+    mapel_mat = next(item for item in DATABASE_APLIKASI if item["id"] == "matematika")
+    materi_sma = mapel_mat["daftar_materi"]["SMA"][0]
+    
+    print(f"\n[Materi]: {materi_sma['judul']}")
+    print(f"Konten Belajar: {materi_sma['isi_konten']}")
+    
+    # 3. Simulasi Menjawab Kuis (1 Pilihan Ganda, 1 Essay)
+    soal_kuis = materi_sma["soal_latihan"]
+    
+    # Kunci soal: sma-q1 -> 'B', sma-q2 -> '5'
+    jawaban_siswa = {
+        "sma-q1": "B",         # Jawaban PG Benar
+        "sma-q2": "Nilainya 5" # Jawaban Essay Benar (mengandung kata kunci '5')
+    }
+    
+    # 4. Hitung Nilai Akhir
+    skor = hitung_skor_akhir(soal_kuis, jawaban_siswa)
+    print(f"\nSkor Ujian Kamu: {skor}/100")
+    
+    # 5. Tampilkan Pembahasan di Akhir
+    print("\n--- Pembahasan Soal ---")
+    for s in soal_kuis:
+        print(f"Soal: {s['pertanyaan']}")
+        print(f"Pembahasan: {s['pembahasan']}\n")
