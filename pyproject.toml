@@ -1,7 +1,0 @@
-[project]
-name = "aplikasi-sains"
-version = "0.1.0"
-description = "Aplikasi Matematika, Fisika, dan Kimia"
-dependencies = [
-    "streamlit>=1.30.0",
-]
