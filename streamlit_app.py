@@ -1,22 +1,37 @@
 import streamlit as st
 
 # ==========================================
-# 1. DATABASE SOAL MATEMATIKA
+# 1. DATABASE SOAL MATEMATIKA SUPER BANYAK & SUSAH
 # ==========================================
 MATEMATIKA_DATA = {
     "SD": [
         {
             "id": "mat-sd-01",
-            "judul": "Pecahan Sederhana",
-            "isi_konten": "Pecahan terdiri dari pembilang (atas) dan penyebut (bawah). Contoh: 1/2 berarti 1 bagian dari total 2 bagian.",
+            "judul": "Pecahan, Desimal, dan Persen (HOTS)",
+            "isi_konten": "Untuk menyelesaikan soal pecahan cerita, samakan penyebutnya terlebih dahulu atau ubah semua bentuk menjadi desimal agar lebih mudah dihitung.",
             "soal_latihan": [
                 {
                     "id": "mat-sd-q1",
                     "tipe": "pilihan_ganda",
-                    "pertanyaan": "Bentuk paling sederhana dari 2/4 adalah...",
-                    "pilihan": ["A. 1/2", "B. 1/3", "C. 1/4", "D. 2/2"],
+                    "pertanyaan": "Ibu membeli 2 1/2 kg tepung. Sebanyak 40% digunakan untuk membuat kue, dan 3/4 kg diberikan kepada tetangga. Sisa tepung Ibu adalah...",
+                    "pilihan": ["A. 0,75 kg", "B. 0,65 kg", "C. 0,55 kg", "D. 0,45 kg"],
                     "kunci_jawaban": "A",
-                    "pembahasan": "Bagi pembilang dan penyebut dengan angka 2. Hasilnya 1/2."
+                    "pembahasan": "Total = 2,5 kg. Kue = 40% x 2,5 = 1 kg. Diberikan = 3/4 = 0,75 kg. Sisa = 2,5 - 1 - 0,75 = 0,75 kg."
+                },
+                {
+                    "id": "mat-sd-q2",
+                    "tipe": "pilihan_ganda",
+                    "pertanyaan": "Hasil dari 125% + 2,25 - 4/5 adalah...",
+                    "pilihan": ["A. 2,7", "B. 2,5", "C. 3,1", "D. 1,9"],
+                    "kunci_jawaban": "A",
+                    "pembahasan": "1,25 + 2,25 - 0,8 = 3,5 - 0,8 = 2,7."
+                },
+                {
+                    "id": "mat-sd-q3",
+                    "tipe": "essay",
+                    "pertanyaan": "Berapakah hasil dari 15 x (24 + 36) : 9?",
+                    "kunci_jawaban": "100",
+                    "pembahasan": "Kerjakan dalam kurung dulu: 24 + 36 = 60. Lalu kalikan: 15 x 60 = 900. Terakhir bagi: 900 : 9 = 100."
                 }
             ]
         }
@@ -24,16 +39,31 @@ MATEMATIKA_DATA = {
     "SMP": [
         {
             "id": "mat-smp-01",
-            "judul": "Aljabar Dasar",
-            "isi_konten": "Aljabar menggunakan variabel (huruf) untuk mewakili angka yang belum diketahui. Contoh: x + 5 = 7, maka x = 2.",
+            "judul": "Persamaan Kuadrat & Fungsi Kuadrat",
+            "isi_konten": "Akar-akar persamaan kuadrat ax^2 + bx + c = 0 dapat dicari dengan faktorisasi atau rumus abc. Nilai diskriminan (D = b^2 - 4ac) menentukan jenis akar.",
             "soal_latihan": [
                 {
                     "id": "mat-smp-q1",
                     "tipe": "pilihan_ganda",
-                    "pertanyaan": "Jika 2x = 10, berapakah nilai x?",
-                    "pilihan": ["A. 2", "B. 3", "C. 5", "D. 10"],
+                    "pertanyaan": "Jika salah satu akar dari persamaan x^2 - bx - 24 = 0 adalah -3, maka nilai b adalah...",
+                    "pilihan": ["A. -5", "B. 5", "C. -3", "D. 3"],
+                    "kunci_jawaban": "B",
+                    "pembahasan": "Substitusi x = -3 ke persamaan: (-3)^2 - b(-3) - 24 = 0 -> 9 + 3b - 24 = 0 -> 3b = 15 -> b = 5."
+                },
+                {
+                    "id": "mat-smp-q2",
+                    "tipe": "pilihan_ganda",
+                    "pertanyaan": "Himpunan penyelesaian dari x^2 - 5x + 6 = 0 adalah...",
+                    "pilihan": ["A. {1, 6}", "B. {-2, -3}", "C. {2, 3}", "D. {-1, 6}"],
                     "kunci_jawaban": "C",
-                    "pembahasan": "Bagi kedua sisi dengan angka 2. x = 10 / 2 = 5."
+                    "pembahasan": "Faktorisasi menjadi (x - 2)(x - 3) = 0. Maka x = 2 atau x = 3."
+                },
+                {
+                    "id": "mat-smp-q3",
+                    "tipe": "essay",
+                    "pertanyaan": "Berapakah nilai diskriminan dari persamaan x^2 - 4x + 4 = 0?",
+                    "kunci_jawaban": "0",
+                    "pembahasan": "D = b^2 - 4ac = (-4)^2 - 4(1)(4) = 16 - 16 = 0."
                 }
             ]
         }
@@ -41,23 +71,31 @@ MATEMATIKA_DATA = {
     "SMA": [
         {
             "id": "mat-sma-01",
-            "judul": "Turunan Fungsi Aljabar",
-            "isi_konten": "Ingat rumus utama turunan: Jika f(x) = x^n, maka turunan pertamanya adalah f'(x) = n * x^(n-1).",
+            "judul": "Integral Tentu & Aplikasi Turunan",
+            "isi_konten": "Integral merupakan antiturunan. Integral tentu memiliki batas atas dan batas bawah untuk menghitung luas daerah di bawah kurva.",
             "soal_latihan": [
                 {
                     "id": "mat-sma-q1",
                     "tipe": "pilihan_ganda",
-                    "pertanyaan": "Turunan pertama dari f(x) = 3x^2 adalah...",
-                    "pilihan": ["A. 3x", "B. 6x", "C. 6x^2", "D. 2x"],
-                    "kunci_jawaban": "B",
-                    "pembahasan": "Kalikan pangkat dengan koefisien: 2 * 3x = 6x."
+                    "pertanyaan": "Hasil dari integral tentu ∫ (from 1 to 3) (3x^2 + 2x) dx adalah...",
+                    "pilihan": ["A. 34", "B. 26", "C. 28", "D. 32"],
+                    "kunci_jawaban": "A",
+                    "pembahasan": "Integralkan menjadi [x^3 + x^2] dari 1 ke 3. Masukkan batas atas: 3^3 + 3^2 = 27 + 9 = 36. Batas bawah: 1^3 + 1^2 = 2. Hasil: 36 - 2 = 34."
                 },
                 {
                     "id": "mat-sma-q2",
+                    "tipe": "pilihan_ganda",
+                    "pertanyaan": "Persamaan garis singgung kurva y = x^2 - 4x + 3 di titik (1, 0) adalah...",
+                    "pilihan": ["A. y = -2x + 2", "B. y = 2x - 2", "C. y = -2x - 2", "D. y = 4x - 4"],
+                    "kunci_jawaban": "A",
+                    "pembahasan": "m = y' = 2x - 4. Di x = 1, m = 2(1) - 4 = -2. Persamaan garis: y - 0 = -2(x - 1) -> y = -2x + 2."
+                },
+                {
+                    "id": "mat-sma-q3",
                     "tipe": "essay",
-                    "pertanyaan": "Berapakah nilai turunan dari f(x) = 5x?",
-                    "kunci_jawaban": "5",
-                    "pembahasan": "Turunan dari x adalah 1, sehingga turunan dari 5x adalah 5."
+                    "pertanyaan": "Tentukan nilai lim (x->3) dari (x^2 - 9) / (x - 3)!",
+                    "kunci_jawaban": "6",
+                    "pembahasan": "Faktorkan pembilang: (x-3)(x+3)/(x-3) = x + 3. Masukkan nilai x = 3: 3 + 3 = 6."
                 }
             ]
         }
@@ -66,14 +104,14 @@ MATEMATIKA_DATA = {
 
 PRE_POST_MATEMATIKA = {
     "pre_test": {
-        "SD": [{"id": "pre-mat-sd", "tipe": "pilihan_ganda", "pertanyaan": "1 + 1 = ...", "pilihan": ["A. 2", "B. 3"], "kunci_jawaban": "A", "pembahasan": "Penjumlahan dasar."}],
-        "SMP": [{"id": "pre-mat-smp", "tipe": "pilihan_ganda", "pertanyaan": "Hasil dari -5 + 3 adalah...", "pilihan": ["A. -2", "B. 2", "C. 8", "D. -8"], "kunci_jawaban": "A", "pembahasan": "-5 ditambah 3 sama dengan -2."}],
-        "SMA": [{"id": "pre-mat-sma", "tipe": "pilihan_ganda", "pertanyaan": "Nilai dari log 10 adalah...", "pilihan": ["A. 0", "B. 1", "C. 10"], "kunci_jawaban": "B", "pembahasan": "Logaritma basis 10 dari 10 adalah 1."}]
+        "SD": [{"id": "pre-mat-sd", "tipe": "pilihan_ganda", "pertanyaan": "KPK dari 12 dan 18 adalah...", "pilihan": ["A. 36", "B. 72", "C. 54"], "kunci_jawaban": "A", "pembahasan": "12 = 2^2 x 3, 18 = 2 x 3^2. KPK = 2^2 x 3^2 = 36."}],
+        "SMP": [{"id": "pre-mat-smp", "tipe": "pilihan_ganda", "pertanyaan": "Gradien garis yang melalui titik (0,0) dan (3,6) adalah...", "pilihan": ["A. 2", "B. -2", "C. 3"], "kunci_jawaban": "A", "pembahasan": "m = (6 - 0) / (3 - 0) = 2."}],
+        "SMA": [{"id": "pre-mat-sma", "tipe": "pilihan_ganda", "pertanyaan": "Nilai dari sin 150 derajat adalah...", "pilihan": ["A. 1/2", "B. -1/2", "C. 1/2 √3"], "kunci_jawaban": "A", "pembahasan": "sin 150 = sin(180 - 30) = sin 30 = 1/2."}]
     },
     "post_test": {
-        "SD": [{"id": "post-mat-sd", "tipe": "pilihan_ganda", "pertanyaan": "2 - 1 = ...", "pilihan": ["A. 1", "B. 0"], "kunci_jawaban": "A", "pembahasan": "Pengurangan dasar."}],
-        "SMP": [{"id": "post-mat-smp", "tipe": "pilihan_ganda", "pertanyaan": "Hasil dari (-2) x 3 adalah...", "pilihan": ["A. -6", "B. 6", "C. -5"], "kunci_jawaban": "A", "pembahasan": "Negatif dikali positif hasilnya negatif."}],
-        "SMA": [{"id": "post-mat-sma", "tipe": "pilihan_ganda", "pertanyaan": "Nilai dari 2^3 adalah...", "pilihan": ["A. 6", "B. 8", "C. 9"], "kunci_jawaban": "B", "pembahasan": "2 x 2 x 2 = 8."}]
+        "SD": [{"id": "post-mat-sd", "tipe": "pilihan_ganda", "pertanyaan": "Sebuah kubus memiliki volume 216 cm³. Panjang rusuknya adalah...", "pilihan": ["A. 6 cm", "B. 7 cm", "C. 8 cm"], "kunci_jawaban": "A", "pembahasan": "Akar pangkat tiga dari 216 adalah 6."}],
+        "SMP": [{"id": "post-mat-smp", "tipe": "pilihan_ganda", "pertanyaan": "Jika f(x) = 3x - 5, maka f(2) adalah...", "pilihan": ["A. 1", "B. -1", "C. 6"], "kunci_jawaban": "A", "pembahasan": "f(2) = 3(2) - 5 = 6 - 5 = 1."}],
+        "SMA": [{"id": "post-mat-sma", "tipe": "pilihan_ganda", "pertanyaan": "Nilai dari log 1000 dengan basis 10 adalah...", "pilihan": ["A. 3", "B. 2", "C. 4"], "kunci_jawaban": "A", "pembahasan": "10 pangkat 3 = 1000, jadi nilainya 3."}]
     }
 }
 
@@ -86,8 +124,11 @@ def hitung_skor(daftar_soal, jawaban_user):
     for soal in daftar_soal:
         ans = jawaban_user.get(soal['id'], "").strip().lower()
         kunci = soal['kunci_jawaban'].strip().lower()
-        if soal['tipe'] == 'pilihan_ganda' and ans == kunci:
-            benar += 1
+        if soal['tipe'] == 'pilihan_ganda':
+            # Ambil huruf depannya saja (A, B, C, D)
+            ans_letter = ans[0].upper() if ans else ""
+            if ans_letter == kunci.upper():
+                benar += 1
         elif soal['tipe'] == 'essay' and (kunci in ans or ans in kunci):
             benar += 1
     return round((benar / len(daftar_soal)) * 100)
@@ -95,7 +136,7 @@ def hitung_skor(daftar_soal, jawaban_user):
 # ==========================================
 # 3. TAMPILAN UTAMA APLIKASI
 # ==========================================
-st.title("🔢 Aplikasi Belajar Matematika")
+st.title("🔢 Aplikasi Belajar Matematika (HOTS Edition)")
 
 jenjang = st.selectbox("Pilih Jenjang Sekolah:", ["SD", "SMP", "SMA"])
 
@@ -114,23 +155,23 @@ if menu == "Belajar Materi & Latihan":
         st.subheader(f"📖 Materi: {materi_terpilih['judul']}")
         st.write(materi_terpilih["isi_konten"])
         
-        st.subheader("✍️ Soal Latihan")
+        st.subheader("✍️ Soal Latihan Tantangan")
         jawaban_user = {}
         
         for soal in materi_terpilih["soal_latihan"]:
-            st.write(soal["pertanyaan"])
+            st.write(f"**{soal['pertanyaan']}**")
             if soal["tipe"] == "pilihan_ganda":
-                jawaban_user[soal["id"]] = st.radio("Pilih jawaban:", soal["pilihan"], key=soal["id"])[0]
+                jawaban_user[soal["id"]] = st.radio("Pilih jawaban:", soal["pilihan"], key=soal["id"])
             else:
-                jawaban_user[soal["id"]] = st.text_input("Tulis jawaban kamu:", key=soal["id"])
+                jawaban_user[soal["id"]] = st.text_input("Tulis jawaban angka/kata kamu:", key=soal["id"])
         
         if st.button("Kirim Jawaban & Lihat Pembahasan"):
             skor = hitung_skor(materi_terpilih["soal_latihan"], jawaban_user)
             st.success(f"Skor kamu: {skor} / 100")
             
-            st.subheader("💡 Pembahasan Soal:")
+            st.subheader("💡 Pembahasan Analitis Soal:")
             for soal in materi_terpilih["soal_latihan"]:
-                st.info(f"Soal: {soal['pertanyaan']}\n\n**Kunci:** {soal['kunci_jawaban']}\n\n**Pembahasan:** {soal['pembahasan']}")
+                st.info(f"Soal: {soal['pertanyaan']}\n\n**Kunci Jawaban:** {soal['kunci_jawaban']}\n\n**Cara Pengerjaan:** {soal['pembahasan']}")
 
 else:
     tipe_tes = "pre_test" if menu == "Pre-Test" else "post_test"
@@ -142,8 +183,8 @@ else:
         st.subheader(f"📝 {menu} - Matematika {jenjang}")
         jawaban_user = {}
         for soal in soal_tes:
-            st.write(soal["pertanyaan"])
-            jawaban_user[soal["id"]] = st.radio("Pilih jawaban:", soal["pilihan"], key=soal["id"])[0]
+            st.write(f"**{soal['pertanyaan']}**")
+            jawaban_user[soal["id"]] = st.radio("Pilih jawaban:", soal["pilihan"], key=soal["id"])
             
         if st.button(f"Selesaikan {menu}"):
             skor = hitung_skor(soal_tes, jawaban_user)
