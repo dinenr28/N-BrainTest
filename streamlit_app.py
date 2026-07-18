@@ -2,7 +2,7 @@ import streamlit as st
 import random
 
 # ==========================================
-# 1. GENERATOR BANK SOAL ACAK DENGAN LATEX EQUATION (FIXED SD)
+# 1. GENERATOR BANK SOAL ACAK DENGAN LATEX EQUATION (FIXED EXTRA BACKSLASH)
 # ==========================================
 def buat_soal_sd():
     soal_list = []
@@ -15,11 +15,10 @@ def buat_soal_sd():
         soal_list.append({
             "id": f"sd-pg-{i}",
             "tipe": "pilihan_ganda",
-            "pertanyaan": f"Berapakah hasil dari $ {a} + {b} \times {c} $ ?",
-            # Membungkus setiap pilihan dalam format rumus $ agar tidak error
+            "pertanyaan": f"Berapakah hasil dari $ {a} + {b} \\times {c} $ ?",
             "pilihan": [f"A. $ {hasil} $", f"B. $ {hasil + 5} $", f"C. $ {hasil - 10} $", f"D. $ {hasil + 2} $"],
             "kunci": "A",
-            "pembahasan": f"Dahulukan perkalian: $ {b} \times {c} = {b*c} $. Lalu tambahkan dengan {a}: $ {a} + {b*c} = {hasil} $."
+            "pembahasan": f"Dahulukan perkalian: $ {b} \\times {c} = {b*c} $. Lalu tambahkan dengan {a}: $ {a} + {b*c} = {hasil} $."
         })
     # 5 soal Essay secara acak
     for i in range(5):
@@ -29,9 +28,9 @@ def buat_soal_sd():
         soal_list.append({
             "id": f"sd-es-{i}",
             "tipe": "essay",
-            "pertanyaan": f"Berapakah hasil pembagian bulat dari $ {a} \div {b} $ ?",
+            "pertanyaan": f"Berapakah hasil pembagian bulat dari $ {a} \\div {b} $ ?",
             "kunci": str(hasil),
-            "pembahasan": f"Hasil dari $ {a} \div {b} $ adalah $ {hasil} $."
+            "pembahasan": f"Hasil dari $ {a} \\div {b} $ adalah $ {hasil} $."
         })
     return soal_list
 
@@ -50,7 +49,7 @@ def buat_soal_smp():
             "pertanyaan": f"Jika $ {a}x + ({b}) = {c} $, berapakah nilai dari variabel $ x $?",
             "pilihan": [f"A. $ {opsi_a} $", f"B. $ {opsi_a + 2} $", f"C. $ {opsi_a - 1} $", f"D. $ {opsi_a + 3} $"],
             "kunci": "A",
-            "pembahasan": f"Pindah ruas: $ {a}x = {c} - ({b}) \rightarrow {a}x = {a*x} \rightarrow x = {x} $."
+            "pembahasan": f"Pindah ruas: $ {a}x = {c} - ({b}) \\rightarrow {a}x = {a*x} \\rightarrow x = {x} $."
         })
     # 5 soal Essay Modulo
     for i in range(5):
@@ -60,7 +59,7 @@ def buat_soal_smp():
         soal_list.append({
             "id": f"smp-es-{i}",
             "tipe": "essay",
-            "pertanyaan": f"Berapakah sisa pembagian dari ekspresi berikut: $ {a} \pmod{{ {b} }} $ ?",
+            "pertanyaan": f"Berapakah sisa pembagian dari ekspresi berikut: $ {a} \\pmod{{ {b} }} $ ?",
             "kunci": str(hasil),
             "pembahasan": f"$ {a} $ dibagi $ {b} $ menghasilkan sisa $ {hasil} $."
         })
@@ -78,7 +77,7 @@ def buat_soal_sma():
         soal_list.append({
             "id": f"sma-pg-{i}",
             "tipe": "pilihan_ganda",
-            "pertanyaan": f"Tentukan hasil nilai akhir dari integral tentu berikut: $$ \int_{{{b_bawah}}}^{{{b_atas}}} {a}x^{{{n}}} \, dx $$",
+            "pertanyaan": f"Tentukan hasil nilai akhir dari integral tentu berikut: $$ \\int_{{{b_bawah}}}^{{{b_atas}}} {a}x^{{{n}}} \\, dx $$",
             "pilihan": [f"A. $ {hasil} $", f"B. $ {hasil + 4} $", f"C. $ {hasil - 2} $", f"D. $ {hasil * 2} $"],
             "kunci": "A",
             "pembahasan": f"Antiturunan dari $ {a}x^{{{n}}} $ adalah $ x^{{{a}}} $. Masukkan batas atas dan bawah: $ ({b_atas}^{{{a}}}) - ({b_bawah}^{{{a}}}) = {hasil} $."
@@ -96,7 +95,7 @@ def buat_soal_sma():
             "tipe": "essay",
             "pertanyaan": f"Diketahui fungsi $ f(x) = {koef}x^{{{pangkat}}} $. Berapakah nilai dari turunan pertama $ f'(2) $ ?",
             "kunci": str(hasil),
-            "pembahasan": f"Rumus turunan $ f'(x) = {turunan_koef}x^{{{turunan_pangkat}}} $. Substitusi nilai $ x=2 \rightarrow {turunan_koef} \times ({x_val}^{{{turunan_pangkat}}}) = {hasil} $."
+            "pembahasan": f"Rumus turunan $ f'(x) = {turunan_koef}x^{{{turunan_pangkat}}} $. Substitusi nilai $ x=2 \\rightarrow {turunan_koef} \\times ({x_val}^{{{turunan_pangkat}}}) = {hasil} $."
         })
     return soal_list
 
