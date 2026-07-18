@@ -2,7 +2,7 @@ import streamlit as st
 import random
 
 # ==========================================
-# 1. GENERATOR BANK SOAL ACAK DENGAN LATEX EQUATION
+# 1. GENERATOR BANK SOAL ACAK DENGAN LATEX EQUATION (FIXED SD)
 # ==========================================
 def buat_soal_sd():
     soal_list = []
@@ -16,7 +16,8 @@ def buat_soal_sd():
             "id": f"sd-pg-{i}",
             "tipe": "pilihan_ganda",
             "pertanyaan": f"Berapakah hasil dari $ {a} + {b} \times {c} $ ?",
-            "pilihan": [f"A. {hasil}", f"B. {hasil + 5}", f"C. {hasil - 10}", f"D. {hasil + 2}"],
+            # Membungkus setiap pilihan dalam format rumus $ agar tidak error
+            "pilihan": [f"A. $ {hasil} $", f"B. $ {hasil + 5} $", f"C. $ {hasil - 10} $", f"D. $ {hasil + 2} $"],
             "kunci": "A",
             "pembahasan": f"Dahulukan perkalian: $ {b} \times {c} = {b*c} $. Lalu tambahkan dengan {a}: $ {a} + {b*c} = {hasil} $."
         })
@@ -30,7 +31,7 @@ def buat_soal_sd():
             "tipe": "essay",
             "pertanyaan": f"Berapakah hasil pembagian bulat dari $ {a} \div {b} $ ?",
             "kunci": str(hasil),
-            "pembahasan": f"Hasil dari $ {a} \div {b} $ adalah {hasil}."
+            "pembahasan": f"Hasil dari $ {a} \div {b} $ adalah $ {hasil} $."
         })
     return soal_list
 
@@ -47,7 +48,7 @@ def buat_soal_smp():
             "id": f"smp-pg-{i}",
             "tipe": "pilihan_ganda",
             "pertanyaan": f"Jika $ {a}x + ({b}) = {c} $, berapakah nilai dari variabel $ x $?",
-            "pilihan": [f"A. {opsi_a}", f"B. {opsi_a + 2}", f"C. {opsi_a - 1}", f"D. {opsi_a + 3}"],
+            "pilihan": [f"A. $ {opsi_a} $", f"B. $ {opsi_a + 2} $", f"C. $ {opsi_a - 1} $", f"D. $ {opsi_a + 3} $"],
             "kunci": "A",
             "pembahasan": f"Pindah ruas: $ {a}x = {c} - ({b}) \rightarrow {a}x = {a*x} \rightarrow x = {x} $."
         })
@@ -78,7 +79,7 @@ def buat_soal_sma():
             "id": f"sma-pg-{i}",
             "tipe": "pilihan_ganda",
             "pertanyaan": f"Tentukan hasil nilai akhir dari integral tentu berikut: $$ \int_{{{b_bawah}}}^{{{b_atas}}} {a}x^{{{n}}} \, dx $$",
-            "pilihan": [f"A. {hasil}", f"B. {hasil + 4}", f"C. {hasil - 2}", f"D. {hasil * 2}"],
+            "pilihan": [f"A. $ {hasil} $", f"B. $ {hasil + 4} $", f"C. $ {hasil - 2} $", f"D. $ {hasil * 2} $"],
             "kunci": "A",
             "pembahasan": f"Antiturunan dari $ {a}x^{{{n}}} $ adalah $ x^{{{a}}} $. Masukkan batas atas dan bawah: $ ({b_atas}^{{{a}}}) - ({b_bawah}^{{{a}}}) = {hasil} $."
         })
@@ -110,7 +111,7 @@ if "jenjang_sebelumnya" not in st.session_state:
 st.sidebar.title("🎛️ Dashboard Menu")
 menu_utama = st.sidebar.radio(
     "Pilih Menu:", 
-    ["🏠 Menu Utama", "✍ *Mulai Ujian (10 Soal Acak)*", "🧮 Kalkulator Ilmiah"]
+    ["🏠 Menu Utama", "✍️ Mulai Ujian (10 Soal Acak)", "🧮 Kalkulator Ilmiah"]
 )
 
 # --- MENU UTAMA ---
@@ -120,7 +121,7 @@ if menu_utama == "🏠 Menu Utama":
     st.session_state.soal_sesi = None 
 
 # --- LATIHAN SOAL (10 SOAL PER SESI) ---
-elif menu_utama == "✍ *Mulai Ujian (10 Soal Acak)*":
+elif menu_utama == "✍️ Mulai Ujian (10 Soal Acak)":
     st.title("📝 Ujian Kuantitatif & Logika Matematika")
     jenjang = st.selectbox("Pilih Jenjang Sekolah:", ["SD", "SMP", "SMA"])
     
@@ -151,7 +152,6 @@ elif menu_utama == "✍ *Mulai Ujian (10 Soal Acak)*":
         benar = 0
         for soal in daftar_soal:
             ans = jawaban_user.get(soal['id'], "").strip().upper()
-            # Cek jawaban berdasarkan pilihan ganda atau esai
             user_choice = ans[0] if soal['tipe'] == 'pilihan_ganda' and ans else ans
             if user_choice == soal['kunci']:
                 benar += 1
